@@ -215,9 +215,9 @@ LC = {
     "p": P((L, XT), (L, DT)) + [arc(320, XM, 150, XRY, 0, 360)] + P((L - 50, DT), (L + 110, DT)),
     "q": P((R, XT), (R, DT)) + [arc(280, XM, 150, XRY, 0, 360)] + P((R, DT), (R + 70, DT)),
     # r: top-left serif only; a base bar made it read like a broken c (seen by eye at 12 px)
-    # arm rises to the x-height and runs flat to x=430: long enough that r never reads as dotless i
-    # at small sizes (Ozge's review), without curving down towards an n
-    "r": P((170, XT), (170, B)) + chain([(170, 300)], arc(300, 300, 130, XT - 300, 180, 90), [(430, XT)])
+    # long curved arm (radius 150, ends at 40 deg): chosen by Ozge; long enough that r never reads as
+    # dotless i at small sizes. Costs a little on n vs r (0.847 -> 0.870) compared with a flat arm.
+    "r": P((170, XT), (170, B)) + chain([(170, 300)], arc(320, 300, 150, XT - 300, 180, 40))
          + P((L - 10, XT), (170, XT)),
     "s": [arc(M, XM + XRY / 2, 160, XRY / 2, 20, 270) + arc(M, XM - XRY / 2, 165, XRY / 2, 90, -140)[1:]],
     "t": chain([(260, 640), (260, 150)], arc(370, 150, 110, 150 - B, 180, 270), [(370, B), (450, B)])
