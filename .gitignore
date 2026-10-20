@@ -1,6 +1,11 @@
 build/
+build.stamp
+out/
+proof/
 __pycache__/
 *.pyc
 venv/
+.ninja_log
+build.ninja
 .DS_Store
 Thumbs.db

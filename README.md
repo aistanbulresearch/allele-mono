@@ -78,13 +78,16 @@ manual changes to the UFO.
 
 ## Building
 
+The repository follows the [Google Fonts project template](https://github.com/googlefonts/googlefonts-project-template).
+
 ```sh
-pip install -r requirements.txt
-sh make.sh
+make ufo     # regenerate sources/AlleleMono-Regular.ufo after editing sources/build.py
+make build   # compile the UFO with gftools builder into fonts/ttf and fonts/webfonts
+make test    # check the fonts with fontspector (needs: cargo binstall fontspector)
 ```
 
-This regenerates the UFO, compiles it with fontmake, autohints it, and writes
-`fonts/ttf/AlleleMono-Regular.ttf`.
+`make` creates a Python virtual environment from `requirements.txt` on first use.
+GitHub Actions runs the same build and fontspector check on every push.
 
 ## License
 

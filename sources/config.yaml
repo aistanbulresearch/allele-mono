@@ -1,0 +1,8 @@
+# Configuration for gftools builder (https://github.com/googlefonts/gftools).
+# The UFO is generated from the glyph skeletons in build.py by ufo_build.py
+# (run "make ufo"); the builder then compiles, autohints and fixes it.
+sources:
+  - AlleleMono-Regular.ufo
+familyName: "Allele Mono"
+buildVariable: false
+buildOTF: false
