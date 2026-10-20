@@ -1,0 +1,8 @@
+fonttools>=4.50
+shapely>=2.0
+ttfautohint-py>=0.5
+# legibility measurements (sources/test_pairs.py and the search scripts)
+pillow>=10
+numpy>=1.26
+# optional: checking OpenType features
+uharfbuzz>=0.40
