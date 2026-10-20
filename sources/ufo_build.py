@@ -356,7 +356,7 @@ def make_ufo(out_dir):
     info.openTypeNameLicenseURL = "https://openfontlicense.org"
     info.openTypeOS2Type = []                       # fsType 0: installable embedding
     info.openTypeOS2WeightClass, info.openTypeOS2WidthClass = 400, 5
-    info.openTypeOS2Selection = [7]                 # USE_TYPO_METRICS
+    info.openTypeOS2Selection = [7, 8]              # USE_TYPO_METRICS, WWS (naming is WWS-conformant)
     info.openTypeOS2TypoAscender, info.openTypeOS2TypoDescender, info.openTypeOS2TypoLineGap = 950, -250, 0
     info.openTypeOS2WinAscent, info.openTypeOS2WinDescent = 950, 250
     info.openTypeHheaAscender, info.openTypeHheaDescender, info.openTypeHheaLineGap = 950, -250, 0
@@ -366,13 +366,17 @@ def make_ufo(out_dir):
     info.postscriptUnderlinePosition, info.postscriptUnderlineThickness = -150, 60
 
     simple = {**b.G, **b.LC, **b.DIG, **b.PUN, **b.NEW, **b.ACC, **b.ALT}
-    order = [".notdef", "space", "uni00A0"] + sorted(simple) + sorted(b.COMP) + sorted(b.COMP_UNENCODED)
+    blanks = {"space": 0x20, "uni00A0": 0xA0, "uni2028": 0x2028, "uni2029": 0x2029}   # empty glyphs
+    order = [".notdef", *blanks] + sorted(simple) + sorted(b.COMP) + sorted(b.COMP_UNENCODED)
 
     for name in order:
         g = font.newGlyph(name)
         g.width = b.ADV
-    font["space"].unicodes = [0x20]
-    font["uni00A0"].unicodes = [0xA0]
+    for name, cp in blanks.items():
+        font[name].unicodes = [cp]
+    # zero-width marks first, so every glyph after them shares one advance (short hmtx)
+    marks = [n for n in order if n in b.MARK_GLYPHS]
+    font.lib["public.glyphOrder"] = [".notdef"] + marks + [n for n in order[1:] if n not in b.MARK_GLYPHS]
 
     def draw(name, strokes, zone, dx=0):
         path = glyph_outline(strokes, zone)
@@ -422,7 +426,6 @@ def make_ufo(out_dir):
                                              **{n: "mark" for n in b.MARK_GLYPHS}}
 
     font.features.text = b.FEATURES
-    font.lib["public.glyphOrder"] = order
     font.save(out_dir, overwrite=True)
     return font
 
