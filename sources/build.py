@@ -154,7 +154,7 @@ G = {
     "L": P((L, T), (L, B), (R, B)),
     # M: shallow vertex (470); a deep vertex was measured to collide with W
     "M": P((L, B), (L, T), (M, 470), (R, T), (R, B)),
-    "N": P((L, B), (L, T), (R, B), (R, T)),
+    "N": P((L - 30, B), (L - 30, T), (R + 30, B), (R + 30, T)),  # wider than H: larger open triangles
     "O": [arc(M, MID, RX, RY, 0, 360)],
     "P": P((L, B), (L, T)) + chain([(L, T), (310, T)], arc(310, 500, 160, 158, 90, -90), [(310, 342), (L, 342)]),
     # Q: tail drops from the bottom centre and turns right (measured best against O, G and D)
