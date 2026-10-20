@@ -211,10 +211,10 @@ LC = {
          + chain([(M, 380)], arc(385, 380, 85, XT - 380, 180, 0), [(R, 380), (R, B)]),
     "n": P((L, XT), (L, B)) + _n_arch,
     "o": [arc(M, XM, RX, XRY, 0, 360)],
-    # p, q: descender serifs set them apart from b and d. q's serif points right only:
-    # a left foot measured closer to g's leftward hook.
+    # p, q: descender serifs set them apart from b and d. q's serif runs both ways from the stem
+    # (a right-only stub looked clipped; centred it measured best against d, a and y, and no worse against g).
     "p": P((L, XT), (L, DT)) + [arc(320, XM, 150, XRY, 0, 360)] + P((L - 50, DT), (L + 110, DT)),
-    "q": P((R, XT), (R, DT)) + [arc(280, XM, 150, XRY, 0, 360)] + P((R, DT), (R + 70, DT)),
+    "q": P((R, XT), (R, DT)) + [arc(280, XM, 150, XRY, 0, 360)] + P((R - 80, DT), (R + 70, DT)),
     # r: top-left serif only; a base bar made it read like a broken c (seen by eye at 12 px)
     # long curved arm (radius 150, ends at 40 deg): chosen by Ozge; long enough that r never reads as
     # dotless i at small sizes. Costs a little on n vs r (0.847 -> 0.870) compared with a flat arm.
