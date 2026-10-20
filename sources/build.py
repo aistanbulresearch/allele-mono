@@ -22,7 +22,7 @@ FAMILY = "Allele Mono"
 DESIGNER = "Ozge A. Cavus - AIstanbul Research Group"
 REPO_URL = "https://github.com/aistanbulresearch/allele-mono"
 PSNAME = "AlleleMono-Regular"
-VERSION = "1.000"
+VERSION = "1.001"
 COPYRIGHT = f"Copyright 2026 The Allele Mono Project Authors ({REPO_URL})"
 
 UPM = 1000
@@ -322,6 +322,9 @@ NEW = {
     "hbar": LC["h"] + P((60, 610), (260, 610)),
     "Lslash": G["L"] + P((50, 250), (260, 420)),
     "lslash": LC["l"] + P((200, 330), (400, 480)),
+    # Indian rupee sign: two bars, a P-like bowl hanging from the top bar, and a diagonal leg
+    "uni20B9": P((L, T), (R, T)) + chain([(L, T), (250, T)], arc(250, 509, 150, T - 509, 90, -90), [(250, 360), (L, 360)])
+               + P((L, 530), (R, 530)) + P((L + 40, 360), (R, B)),
     "longs": chain([(260, B), (260, 560)], arc(370, 560, 110, AT - 560, 180, 40)),      # f without its bar
     "Ldot": G["L"] + P((340, 330), (340, 350)),                                          # Catalan
     "ldot": LC["l"] + P((450, 260), (450, 280)),
@@ -383,7 +386,7 @@ NEW_ZONE = {"AE": (0, CAP), "OE": (0, CAP), "Oslash": (0, CAP), "Eth": (0, CAP),
             "uni1E9E": (0, CAP), "Hbar": (0, CAP), "Lslash": (0, CAP),
             "ae": (0, XH), "oe": (0, XH), "oslash": (0, XH), "dcroat": (0, ASC), "eth": (0, ASC),
             "thorn": (DESC, ASC), "germandbls": (0, ASC), "hbar": (0, ASC), "lslash": (0, ASC),
-            "longs": (0, ASC), "Ldot": (0, CAP), "ldot": (0, ASC), "IJ": (0, CAP), "ij": (DESC, ASC)}
+            "uni20B9": (0, CAP), "longs": (0, ASC), "Ldot": (0, CAP), "ldot": (0, ASC), "IJ": (0, CAP), "ij": (DESC, ASC)}
 # marks are drawn lighter than the 84-unit stems, as is usual; dots keep the full weight
 _MARK_STROKE = {"gravecomb": 72, "acutecomb": 72, "circumflexcomb": 72, "caroncomb": 72, "macroncomb": 72,
                 "brevecomb": 66, "hungarumlautcomb": 72, "commaaccentcomb": 72, "commaturnedabovecomb": 72,

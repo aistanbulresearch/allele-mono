@@ -17,7 +17,7 @@ Licensed under the [SIL Open Font License 1.1](OFL.txt).
 
 ## Status
 
-**Version 1.000.**
+**Version 1.001.**
 
 - Character set: the full Google Fonts minimum set, GF Latin Core (319 characters), plus the
   auxiliary letters of several European orthographies (for example Dutch IJ, Catalan L with

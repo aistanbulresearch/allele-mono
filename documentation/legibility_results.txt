@@ -1,4 +1,4 @@
-Allele Mono 1.000: blurred-cosine similarity of confusable pairs (lower = easier to tell apart).
+Allele Mono 1.001: blurred-cosine similarity of confusable pairs (lower = easier to tell apart).
 Compared with 11 Google Fonts monospace families at Regular weight. Rank 1 = most distinguishable of 12.
 Proxy measurement, not a human reading study. Produced by sources/test_pairs.py.
 
