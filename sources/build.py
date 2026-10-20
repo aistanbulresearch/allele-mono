@@ -375,7 +375,7 @@ NEW_ZONE = {"AE": (0, CAP), "OE": (0, CAP), "Oslash": (0, CAP), "Eth": (0, CAP),
             "thorn": (DESC, ASC), "germandbls": (0, ASC), "hbar": (0, ASC), "lslash": (0, ASC)}
 # marks are drawn lighter than the 84-unit stems, as is usual; dots keep the full weight
 _MARK_STROKE = {"gravecomb": 72, "acutecomb": 72, "circumflexcomb": 72, "caroncomb": 72, "macroncomb": 72,
-                "brevecomb": 72, "hungarumlautcomb": 72, "commaaccentcomb": 72, "commaturnedabovecomb": 72,
+                "brevecomb": 66, "hungarumlautcomb": 72, "commaaccentcomb": 72, "commaturnedabovecomb": 72,
                 "caroncomb.alt": 72, "tildecomb": 66, "ringcomb": 60, "cedillacomb": 62, "ogonekcomb": 62}
 STROKE_FOR = {**_MARK_STROKE, "copyright": 70, "registered": 60, "trademark": 60, "ordfeminine": 60, "ordmasculine": 60,
               "degree": 70, "uni25CC": 40, "section": 76}
@@ -387,7 +387,8 @@ ACC = {
     # preceding letter; composites place them back with dx = +ADV.
     "dotaccentcomb": _bigdot(M),
     "dieresiscomb": P((200, DOT[0]), (200, DOT[1])) + P((400, DOT[0]), (400, DOT[1])),
-    "brevecomb": [arc(M, 640, 110, 70, 180, 360)],   # tips kept clear of cap height
+    # breve: wide and shallow, set high enough that a clear gap stays above the g's bowl at text sizes
+    "brevecomb": [arc(M, 688, 120, 56, 180, 360)],
     "cedillacomb": chain([(M, 10), (M, -40)], arc(M, -102, 72, 62, 90, -150)),   # open hook, lighter stroke
     "gravecomb": P((345, 600), (255, 690)),
     "acutecomb": P((255, 600), (345, 690)),
@@ -430,6 +431,7 @@ feature ss01 {
 """
 
 # composites: name -> (codepoint, [(component, dx, dy), ...]); built by _composites()
+UC_SHIFT_FOR = {"brevecomb": 160}      # the high breve needs less lift over capitals to stay inside the ascent
 ASC_SHIFT = ASC - XH - 30     # accents over ascenders (l acute) stay inside the 950 ascent
 _MARK_FOR = {0x300: "gravecomb", 0x301: "acutecomb", 0x302: "circumflexcomb", 0x303: "tildecomb",
              0x304: "macroncomb", 0x306: "brevecomb", 0x307: "dotaccentcomb", 0x308: "dieresiscomb",
@@ -480,7 +482,7 @@ def _composites(codepoints):
             dy = 0
         else:
             dx = 0
-            dy = UC_SHIFT if upper else (ASC_SHIFT if base in _ASCENDERS else 0)
+            dy = UC_SHIFT_FOR.get(mark, UC_SHIFT) if upper else (ASC_SHIFT if base in _ASCENDERS else 0)
         base_glyph = {"i": "dotlessi", "j": "uni0237"}.get(base, base) if mark not in _BELOW else base
         out[_glyph_name(cp)] = (cp, [(base_glyph, 0, 0), (mark, ADV + dx, dy)])
     return out
