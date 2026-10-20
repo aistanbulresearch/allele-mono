@@ -32,7 +32,7 @@ and checked by eye at 12 px (see [Measuring legibility](#measuring-legibility)).
 | D / G / Q | D has short shoulders and a wide bowl; Q's tail drops from the bottom and turns right |
 | i / dotless i / l / 1 / I | i has a large dot; l has a tail to the right; 1 has a flag and no base bar |
 | b / d / p / q | p and q have descender serifs (q's points right only, away from g) |
-| a / e / o | a has a small bowl; e has a raised bar and a wide aperture |
+| a / e / o | a has a small, open bowl that runs flat into the stem; e has a raised bar and a wide aperture |
 | O / 0 | zero is narrower than O and dotted (not slashed, to avoid confusion with Ø) |
 
 ### Stylistic set 1: R-form r

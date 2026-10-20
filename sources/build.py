@@ -179,8 +179,10 @@ _n_arch = chain([(L, 300)], arc(M, 300, RX, XT - 300, 180, 0), [(R, 300), (R, B)
 DOT = (620, 650)             # skeleton y-range of the i/j dot
 LC = {
     # a: smaller bowl (top at 240) and a hook starting at 140 deg (search: separates a from o and e)
+    # The bowl is open: its top runs flat into the stem and its right side merges
+    # tangentially into the stem (a closed bowl plus a bar left a heavy blob top right).
     "a": chain(arc(M, 360, RX, XT - 360, 140, 0), [(R, 360), (R, B)])
-         + [arc(285, 141, 145, 141 - B, 0, 360)] + P((285, 240), (R, 240)),
+         + chain([(R, 240), (M + 10, 240)], arc(M + 10, 141, RX - 10, 141 - B, 90, 360)),
     "b": P((L, AT), (L, B)) + [arc(320, XM, 150, XRY, 0, 360)],
     "c": [arc(M, XM, RX, XRY, 45, 315)],
     "d": P((R, AT), (R, B)) + [arc(280, XM, 150, XRY, 0, 360)],
