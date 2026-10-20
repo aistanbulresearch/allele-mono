@@ -20,6 +20,7 @@ import ufoLib2
 from fontTools.pens.basePen import decomposeQuadraticSegment
 from fontTools.pens.filterPen import FilterPen
 from fontTools.pens.roundingPen import RoundingPen
+from fontTools.pens.transformPen import TransformPen
 from ufoLib2.objects import Component
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -318,7 +319,7 @@ def make_ufo(out_dir):
     info.postscriptUnderlinePosition, info.postscriptUnderlineThickness = -150, 60
 
     simple = {**b.G, **b.LC, **b.DIG, **b.PUN, **b.ACC, **b.ALT}
-    order = [".notdef", "space", "uni00A0"] + sorted(simple) + sorted(b.COMP)
+    order = [".notdef", "space", "uni00A0"] + sorted(simple) + sorted(b.COMP) + sorted(b.COMP_UNENCODED)
 
     for name in order:
         g = font.newGlyph(name)
@@ -326,23 +327,45 @@ def make_ufo(out_dir):
     font["space"].unicodes = [0x20]
     font["uni00A0"].unicodes = [0xA0]
 
-    def draw(name, strokes, zone):
+    def draw(name, strokes, zone, dx=0):
         path = glyph_outline(strokes, zone)
         glyph = font[name]
         glyph.clearContours()
-        path.draw(QuadToCubicPen(RoundingPen(glyph.getPen())))
+        path.draw(QuadToCubicPen(RoundingPen(TransformPen(glyph.getPen(), (1, 0, 0, 1, dx, 0)))))
         _drop_redundant_points(glyph)
 
     draw(".notdef", b.NOTDEF, (-300, 900))
     for name, strokes in simple.items():
-        draw(name, strokes, b.zone(name))
-        if name not in b.ALT:
+        is_mark = name in b.MARK_GLYPHS
+        draw(name, strokes, b.zone(name), -b.ADV if is_mark else 0)
+        if is_mark:
+            font[name].width = 0
+        if name in b.NAME_TO_CP:
             font[name].unicodes = [b.NAME_TO_CP[name]]
-    for name, (cp, base, acc, dy) in b.COMP.items():
+    for name, cp, comps in [(n, cp, c) for n, (cp, c) in b.COMP.items()] + \
+            [(n, None, c) for n, c in b.COMP_UNENCODED.items()]:
         g = font[name]
-        g.unicodes = [cp]
-        g.components.append(Component(base))
-        g.components.append(Component(acc, transformation=(1, 0, 0, 1, 0, dy)))
+        if cp is not None:
+            g.unicodes = [cp]
+        for comp, dx, dy in comps:
+            g.components.append(Component(comp, transformation=(1, 0, 0, 1, dx, dy)))
+
+    # anchors, so the mark feature can place any combining accent on any letter
+    letters = [n for n in list(b.G) + list(b.LC) if n in font and n not in b.MARK_GLYPHS]
+    for n in letters:
+        g = font[n]
+        top = b.CAP if n in b.G else (b.ASC if n in b._ASCENDERS else b.XH)
+        g.appendAnchor({"name": "top", "x": b.M, "y": top})
+        g.appendAnchor({"name": "bottom", "x": b.M if n not in b._COMMA_X else b._COMMA_X[n], "y": 0})
+        if n in b._OGONEK_X:
+            g.appendAnchor({"name": "ogonek", "x": b._OGONEK_X[n], "y": 0})
+    for n in b.MARK_GLYPHS:
+        if n == "caroncomb.alt":
+            continue
+        kind = "ogonek" if n == "ogonekcomb" else ("bottom" if n in b._BELOW else "top")
+        font[n].appendAnchor({"name": "_" + kind, "x": b.M - b.ADV, "y": 0 if kind != "top" else b.XH})
+    font.lib["public.openTypeCategories"] = {**{n: "base" for n in letters},
+                                             **{n: "mark" for n in b.MARK_GLYPHS}}
 
     font.features.text = b.FEATURES
     font.lib["public.glyphOrder"] = order

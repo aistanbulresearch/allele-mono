@@ -1,6 +1,13 @@
 
 languagesystem DFLT dflt;
 languagesystem latn dflt;
+@TopMarks = [gravecomb acutecomb circumflexcomb tildecomb macroncomb brevecomb dotaccentcomb
+             dieresiscomb ringcomb hungarumlautcomb caroncomb commaturnedabovecomb];
+feature ccmp {
+    # i and j lose their dot when an accent is typed on top of them
+    sub [i j iogonek]' @TopMarks by [dotlessi uni0237 iogonek.dotless];
+    sub [i j]' [cedillacomb commaaccentcomb ogonekcomb] @TopMarks by [dotlessi uni0237];
+} ccmp;
 feature ss01 {
     featureNames { name "R-form r"; };
     sub r by r.ss01;

@@ -196,6 +196,7 @@ LC = {
     # i: serif left at the top, full base bar: keeps i, l, 1, I apart
     "i": P((L + 40, XT), (M, XT), (M, B)) + P((L + 20, B), (R - 20, B)) + _bigdot(M),
     "dotlessi": P((L + 40, XT), (M, XT), (M, B)) + P((L + 20, B), (R - 20, B)),
+    "uni0237": chain([(L + 40, XT), (360, XT), (360, -60)], arc(230, -60, 130, -60 - DT, 0, -150)),
     "j": chain([(L + 40, XT), (360, XT), (360, -60)], arc(230, -60, 130, -60 - DT, 0, -150))
          + _bigdot(360),
     "k": P((L, AT), (L, B)) + P((R - 10, XT), (L + 10, 200)) + P((244, 290), (R, B)),
@@ -273,11 +274,27 @@ PUN = {
 
 # ---------------------------------------------------------------- accents (drawn at lowercase position)
 ACC = {
+    # Marks are drawn centred on x = 300 above the x-height (or below the baseline), then
+    # stored shifted one advance to the left with zero width, so they combine onto the
+    # preceding letter; composites place them back with dx = +ADV.
     "dotaccentcomb": _bigdot(M),
     "dieresiscomb": P((200, DOT[0]), (200, DOT[1])) + P((400, DOT[0]), (400, DOT[1])),
     "brevecomb": [arc(M, 640, 110, 70, 180, 360)],   # tips kept clear of cap height
     "cedillacomb": chain([(M, 10), (M, -60)], arc(M, -110, 60, 50, 90, -160)),
+    "gravecomb": P((345, 600), (255, 690)),
+    "acutecomb": P((255, 600), (345, 690)),
+    "circumflexcomb": P((195, 600), (M, 690), (405, 600)),
+    "caroncomb": P((195, 690), (M, 600), (405, 690)),
+    "tildecomb": chain(arc(250, 630, 55, 40, 180, 0), arc(350, 630, 55, 40, 180, 360)),
+    "macroncomb": P((195, 640), (405, 640)),
+    "ringcomb": [arc(M, 650, 62, 55, 0, 360)],
+    "hungarumlautcomb": P((175, 600), (245, 690)) + P((335, 600), (405, 690)),
+    "commaaccentcomb": P((310, -70), (275, -180)),
+    "commaturnedabovecomb": P((285, 590), (320, 700)),
+    "ogonekcomb": chain([(M, 30), (M, -40)], arc(380, -40, 80, 100, 180, 300)),
+    "caroncomb.alt": P((315, 700), (290, 590)),     # the apostrophe-like caron of d l t L
 }
+MARK_GLYPHS = set(ACC)
 UC_SHIFT = CAP - XH          # accents move up by this much over capitals
 
 # alternates: small-capital R form of r (Ozge's handwriting), opt-in via ss01.
@@ -289,26 +306,83 @@ ALT = {
 FEATURES = """
 languagesystem DFLT dflt;
 languagesystem latn dflt;
+@TopMarks = [gravecomb acutecomb circumflexcomb tildecomb macroncomb brevecomb dotaccentcomb
+             dieresiscomb ringcomb hungarumlautcomb caroncomb commaturnedabovecomb];
+feature ccmp {
+    # i and j lose their dot when an accent is typed on top of them
+    sub [i j iogonek]' @TopMarks by [dotlessi uni0237 iogonek.dotless];
+    sub [i j]' [cedillacomb commaaccentcomb ogonekcomb] @TopMarks by [dotlessi uni0237];
+} ccmp;
 feature ss01 {
     featureNames { name "R-form r"; };
     sub r by r.ss01;
 } ss01;
 """
 
-# composites: name -> (codepoint, base, accent, dy)
-COMP = {
-    "Idotaccent": (0x130, "I", "dotaccentcomb", UC_SHIFT),
-    "Gbreve": (0x11E, "G", "brevecomb", UC_SHIFT),
-    "gbreve": (0x11F, "g", "brevecomb", 0),
-    "Scedilla": (0x15E, "S", "cedillacomb", 0),
-    "scedilla": (0x15F, "s", "cedillacomb", 0),
-    "Ccedilla": (0xC7, "C", "cedillacomb", 0),
-    "ccedilla": (0xE7, "c", "cedillacomb", 0),
-    "Odieresis": (0xD6, "O", "dieresiscomb", UC_SHIFT),
-    "odieresis": (0xF6, "o", "dieresiscomb", 0),
-    "Udieresis": (0xDC, "U", "dieresiscomb", UC_SHIFT),
-    "udieresis": (0xFC, "u", "dieresiscomb", 0),
-}
+# composites: name -> (codepoint, [(component, dx, dy), ...]); built by _composites()
+ASC_SHIFT = ASC - XH - 30     # accents over ascenders (l acute) stay inside the 950 ascent
+_MARK_FOR = {0x300: "gravecomb", 0x301: "acutecomb", 0x302: "circumflexcomb", 0x303: "tildecomb",
+             0x304: "macroncomb", 0x306: "brevecomb", 0x307: "dotaccentcomb", 0x308: "dieresiscomb",
+             0x30A: "ringcomb", 0x30B: "hungarumlautcomb", 0x30C: "caroncomb", 0x326: "commaaccentcomb",
+             0x327: "cedillacomb", 0x328: "ogonekcomb"}
+_BELOW = {"cedillacomb", "commaaccentcomb", "ogonekcomb"}
+_OGONEK_X = {"A": 480, "E": 450, "I": 330, "U": 360, "a": 470, "e": 370, "i": 400, "u": 470}
+_COMMA_X = {"t": 260}
+# Czech/Slovak d l t L take the apostrophe-like caron beside the stem: (dx, dy) of caroncomb.alt
+_CARON_ALT = {"d": (255, 40), "l": (120, 40), "t": (80, 0), "L": (-40, 0)}
+# Latvian: K L N k l n G take a comma below instead of the cedilla, g a turned comma above
+_LATVIAN = set("GKLNkln")
+_SPACING = {0xA8: "dieresiscomb", 0xAF: "macroncomb", 0xB4: "acutecomb", 0xB8: "cedillacomb",
+            0x2DC: "tildecomb", 0x2DA: "ringcomb", 0x2D8: "brevecomb", 0x2DB: "ogonekcomb",
+            0x2D9: "dotaccentcomb", 0x2DD: "hungarumlautcomb", 0x2C6: "circumflexcomb", 0x2C7: "caroncomb"}
+_ASCENDERS = set("bdfhklt")
+
+
+def _glyph_name(cp):
+    from fontTools import agl
+    return agl.UV2AGL.get(cp, f"uni{cp:04X}")
+
+
+def _composites(codepoints):
+    import unicodedata
+    out = {}
+    for cp in codepoints:
+        ch = chr(cp)
+        if cp in _SPACING:
+            out[_glyph_name(cp)] = (cp, [(_SPACING[cp], ADV, 0)])
+            continue
+        parts = [int(x, 16) for x in unicodedata.decomposition(ch).split() if not x.startswith("<")]
+        if len(parts) != 2 or parts[1] not in _MARK_FOR:
+            continue
+        base, mark = chr(parts[0]), _MARK_FOR[parts[1]]
+        upper = base.isupper()
+        if mark == "cedillacomb" and base in _LATVIAN:
+            mark = "commaaccentcomb"
+        if mark == "cedillacomb" and base == "g":
+            mark = "commaturnedabovecomb"
+        if mark == "caroncomb" and base in _CARON_ALT:
+            dx, dy = _CARON_ALT[base]
+            out[_glyph_name(cp)] = (cp, [(base, 0, 0), ("caroncomb.alt", ADV + dx, dy)])
+            continue
+        if mark in _BELOW:
+            dx = (_OGONEK_X.get(base, M) - M) if mark == "ogonekcomb" else (_COMMA_X.get(base, M) - M)
+            dy = 0
+        else:
+            dx = 0
+            dy = UC_SHIFT if upper else (ASC_SHIFT if base in _ASCENDERS else 0)
+        base_glyph = {"i": "dotlessi", "j": "uni0237"}.get(base, base) if mark not in _BELOW else base
+        out[_glyph_name(cp)] = (cp, [(base_glyph, 0, 0), (mark, ADV + dx, dy)])
+    return out
+
+
+_TURKISH = [0x130, 0x11E, 0x11F, 0x15E, 0x15F, 0xC7, 0xE7, 0xD6, 0xF6, 0xDC, 0xFC]
+_LATIN_CORE_ACCENTED = "".join(chr(c) for c in _SPACING) + (
+    "ÀÁÂÃÄÅÈÉÊËÌÍÎÏÑÒÓÔÕÙÚÛÝàáâãäåèéêëìíîïñòóôõùúûýÿ"
+    "ĀāĂăĄąĆćĊċČčĎďĒēĖėĘęĚěĠġĢģĪīĮįĶķĹĺĻļĽľŃńŅņŇňŌōŐőŔŕŘřŚśŠšŢţŤťŪūŮůŰűŲųŴŵŶŷŸŹźŻżŽž"
+    "ȘșȚțẀẁẂẃẄẅỲỳ"
+)
+COMP = _composites(_TURKISH + [ord(c) for c in _LATIN_CORE_ACCENTED])
+COMP_UNENCODED = {"iogonek.dotless": [("dotlessi", 0, 0), ("ogonekcomb", ADV + _OGONEK_X["i"] - M, 0)]}
 
 NAME_TO_CP = {**{c: ord(c) for c in G}, **{c: ord(c) for c in LC if len(c) == 1}, "dotlessi": 0x131,
               "zero": 0x30, "one": 0x31, "two": 0x32, "three": 0x33, "four": 0x34, "five": 0x35, "six": 0x36,
@@ -319,7 +393,8 @@ NAME_TO_CP = {**{c: ord(c) for c in G}, **{c: ord(c) for c in LC if len(c) == 1}
               "less": 0x3C, "greater": 0x3E, "equal": 0x3D, "plus": 0x2B, "asterisk": 0x2A, "exclam": 0x21,
               "question": 0x3F, "quotesingle": 0x27, "quotedbl": 0x22, "numbersign": 0x23, "percent": 0x25,
               "dollar": 0x24,
-              "dotaccentcomb": 0x307, "dieresiscomb": 0x308, "brevecomb": 0x306, "cedillacomb": 0x327}
+              "uni0237": 0x237, "commaturnedabovecomb": 0x312,
+              **{v: k for k, v in _MARK_FOR.items()}}
 
 
 NOTDEF = P((90, 0), (90, 700), (510, 700), (510, 0), (90, 0))   # hollow box, the conventional .notdef
@@ -335,7 +410,7 @@ def zone(name):
         return (0, XH)
     if name in LC:
         top = ASC if name in ("b", "d", "f", "h", "k", "l", "t", "i", "j") else XH
-        bottom = DESC if name in ("g", "j", "p", "q", "y") else 0
+        bottom = DESC if name in ("g", "j", "p", "q", "y", "uni0237") else 0
         return (bottom, top)
     return (-300, 900)         # punctuation and accents: no clipping in practice
 
@@ -362,8 +437,8 @@ def outline(strokes, clip=(0, CAP)):
 def build(path, glyph_defs=None):
     upper = glyph_defs or G
     simple = {**upper, **LC, **DIG, **PUN, **ACC, **ALT}
-    encoded = {n: s for n, s in simple.items() if n not in ALT}
-    order = [".notdef", "space", "uni00A0"] + sorted(simple) + sorted(COMP)
+    encoded = {n: s for n, s in simple.items() if n in NAME_TO_CP}   # alternates stay unencoded
+    order = [".notdef", "space", "uni00A0"] + sorted(simple) + sorted(COMP) + sorted(COMP_UNENCODED)
     fb = FontBuilder(UPM, isTTF=True)
     fb.setupGlyphOrder(order)
     cmap = {32: "space", 0xA0: "uni00A0", **{NAME_TO_CP[n]: n for n in encoded}, **{v[0]: k for k, v in COMP.items()}}
@@ -371,10 +446,13 @@ def build(path, glyph_defs=None):
     glyphs = {".notdef": outline(NOTDEF, (-300, 900)), "space": TTGlyphPen(None).glyph(),
               "uni00A0": TTGlyphPen(None).glyph()}
     glyphs.update({n: outline(s, zone(n)) for n, s in simple.items()})
-    for name, (_, base, acc, dy) in COMP.items():
+    for n in MARK_GLYPHS:                         # zero-width marks sit one advance to the left
+        if glyphs[n].numberOfContours:
+            glyphs[n].coordinates.translate((-ADV, 0))
+    for name, comps in [(n, c) for n, (_, c) in COMP.items()] + list(COMP_UNENCODED.items()):
         pen = TTGlyphPen(glyphs)
-        pen.addComponent(base, (1, 0, 0, 1, 0, 0))
-        pen.addComponent(acc, (1, 0, 0, 1, 0, dy))
+        for comp, dx, dy in comps:
+            pen.addComponent(comp, (1, 0, 0, 1, dx, dy))
         glyphs[name] = pen.glyph()
     fb.setupGlyf(glyphs)
     glyf = fb.font["glyf"]
@@ -382,7 +460,7 @@ def build(path, glyph_defs=None):
     for g in order:
         glyf[g].recalcBounds(glyf)
         lsb[g] = getattr(glyf[g], "xMin", 0) if glyf[g].numberOfContours else 0
-    fb.setupHorizontalMetrics({g: (ADV, lsb[g]) for g in order})
+    fb.setupHorizontalMetrics({g: (0 if g in MARK_GLYPHS else ADV, lsb[g]) for g in order})
     fb.setupHorizontalHeader(ascent=950, descent=-250)
     fb.setupNameTable({
         "familyName": FAMILY, "styleName": "Regular",
