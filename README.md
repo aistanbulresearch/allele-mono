@@ -14,8 +14,10 @@ Licensed under the [SIL Open Font License 1.1](OFL.txt).
 
 **Draft, version 0.100. Not yet ready for Google Fonts submission.**
 
-- Character set: 106 characters (A-Z, a-z, 0-9, Turkish letters, basic punctuation).
-  The Google Fonts minimum (GF Latin Core) is 319.
+- Character set: the full Google Fonts minimum set, GF Latin Core (319 characters), plus a
+  dotted circle and an R-form r alternate. Accented letters are components; combining accents
+  are zero-width and placed with a mark feature (any accent on any letter), and i and j lose
+  their dot under an accent. See [documentation/specimen_all.png](documentation/specimen_all.png).
 - Outlines are true cubic curves with points on extrema, built from a UFO source with fontmake.
 - Autohinted with ttfautohint.
 

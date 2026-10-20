@@ -8,25 +8,33 @@
       <string>space</string>
       <string>uni00A0</string>
       <string>A</string>
+      <string>AE</string>
       <string>B</string>
       <string>C</string>
       <string>D</string>
       <string>E</string>
+      <string>Eth</string>
+      <string>Euro</string>
       <string>F</string>
       <string>G</string>
       <string>H</string>
+      <string>Hbar</string>
       <string>I</string>
       <string>J</string>
       <string>K</string>
       <string>L</string>
+      <string>Lslash</string>
       <string>M</string>
       <string>N</string>
       <string>O</string>
+      <string>OE</string>
+      <string>Oslash</string>
       <string>P</string>
       <string>Q</string>
       <string>R</string>
       <string>S</string>
       <string>T</string>
+      <string>Thorn</string>
       <string>U</string>
       <string>V</string>
       <string>W</string>
@@ -35,7 +43,12 @@
       <string>Z</string>
       <string>a</string>
       <string>acutecomb</string>
+      <string>ae</string>
+      <string>ampersand</string>
+      <string>asciicircum</string>
+      <string>asciitilde</string>
       <string>asterisk</string>
+      <string>at</string>
       <string>b</string>
       <string>backslash</string>
       <string>bar</string>
@@ -44,31 +57,49 @@
       <string>bracketleft</string>
       <string>bracketright</string>
       <string>brevecomb</string>
+      <string>bullet</string>
       <string>c</string>
       <string>caroncomb</string>
       <string>caroncomb.alt</string>
       <string>cedillacomb</string>
+      <string>cent</string>
       <string>circumflexcomb</string>
       <string>colon</string>
       <string>comma</string>
       <string>commaaccentcomb</string>
       <string>commaturnedabovecomb</string>
+      <string>copyright</string>
       <string>d</string>
+      <string>dcroat</string>
+      <string>degree</string>
       <string>dieresiscomb</string>
+      <string>divide</string>
       <string>dollar</string>
       <string>dotaccentcomb</string>
       <string>dotlessi</string>
       <string>e</string>
       <string>eight</string>
+      <string>ellipsis</string>
+      <string>emdash</string>
+      <string>endash</string>
       <string>equal</string>
+      <string>eth</string>
       <string>exclam</string>
+      <string>exclamdown</string>
       <string>f</string>
       <string>five</string>
       <string>four</string>
       <string>g</string>
+      <string>germandbls</string>
+      <string>grave</string>
       <string>gravecomb</string>
       <string>greater</string>
+      <string>guillemotleft</string>
+      <string>guillemotright</string>
+      <string>guilsinglleft</string>
+      <string>guilsinglright</string>
       <string>h</string>
+      <string>hbar</string>
       <string>hungarumlautcomb</string>
       <string>hyphen</string>
       <string>i</string>
@@ -76,43 +107,67 @@
       <string>k</string>
       <string>l</string>
       <string>less</string>
+      <string>lslash</string>
       <string>m</string>
       <string>macroncomb</string>
+      <string>minus</string>
+      <string>multiply</string>
       <string>n</string>
       <string>nine</string>
       <string>numbersign</string>
       <string>o</string>
+      <string>oe</string>
       <string>ogonekcomb</string>
       <string>one</string>
+      <string>ordfeminine</string>
+      <string>ordmasculine</string>
+      <string>oslash</string>
       <string>p</string>
+      <string>paragraph</string>
       <string>parenleft</string>
       <string>parenright</string>
       <string>percent</string>
       <string>period</string>
+      <string>periodcentered</string>
       <string>plus</string>
       <string>q</string>
       <string>question</string>
+      <string>questiondown</string>
       <string>quotedbl</string>
+      <string>quotedblbase</string>
+      <string>quotedblleft</string>
+      <string>quotedblright</string>
+      <string>quoteleft</string>
+      <string>quoteright</string>
+      <string>quotesinglbase</string>
       <string>quotesingle</string>
       <string>r</string>
       <string>r.ss01</string>
+      <string>registered</string>
       <string>ringcomb</string>
       <string>s</string>
+      <string>section</string>
       <string>semicolon</string>
       <string>seven</string>
       <string>six</string>
       <string>slash</string>
+      <string>sterling</string>
       <string>t</string>
+      <string>thorn</string>
       <string>three</string>
       <string>tildecomb</string>
+      <string>trademark</string>
       <string>two</string>
       <string>u</string>
       <string>underscore</string>
       <string>uni0237</string>
+      <string>uni1E9E</string>
+      <string>uni25CC</string>
       <string>v</string>
       <string>w</string>
       <string>x</string>
       <string>y</string>
+      <string>yen</string>
       <string>z</string>
       <string>zero</string>
       <string>Aacute</string>
@@ -129,6 +184,7 @@
       <string>Ccedilla</string>
       <string>Cdotaccent</string>
       <string>Dcaron</string>
+      <string>Dcroat</string>
       <string>Eacute</string>
       <string>Ecaron</string>
       <string>Ecircumflex</string>
@@ -409,6 +465,8 @@
       <key>u</key>
       <string>base</string>
       <key>uni0237</key>
+      <string>base</string>
+      <key>uni25CC</key>
       <string>base</string>
       <key>v</key>
       <string>base</string>

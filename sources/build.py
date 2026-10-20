@@ -61,6 +61,10 @@ class ArcSeg:
         n = max(8, int(abs(self.a1 - self.a0) / step))
         return [self.point(self.a0 + (self.a1 - self.a0) * i / n) for i in range(n + 1)]
 
+    def rotated(self, cy0):
+        return ArcSeg(2 * M - self.cx, 2 * cy0 - self.cy, self.rx, self.ry, self.a0 + 180, self.a1 + 180,
+                      self.skip_first)
+
     def mirrored(self):
         return ArcSeg(2 * M - self.cx, self.cy, self.rx, self.ry, 180 - self.a0, 180 - self.a1, self.skip_first)
 
@@ -272,6 +276,101 @@ PUN = {
     "dollar": G["S"] + P((M, -60), (M, 760)),
 }
 
+
+def rot180(strokes, cy):
+    """Rotate strokes half a turn about (M, cy): turns ? into an inverted question mark."""
+    out = []
+    for st in strokes:
+        out.append([b_.rotated(cy) if isinstance(b_, ArcSeg) else (2 * M - b_[0], 2 * cy - b_[1]) for b_ in st])
+    return out
+
+
+# ---------------------------------------------------------------- remaining GF Latin Core letters and symbols
+_D = P((L, B), (L, T)) + chain([(L, T), (200, T)], arc(200, MID, 270, RY, 90, -90), [(200, B), (L, B)])
+_E_RIGHT = chain([(M, 290), (385 + 85 * math.cos(math.asin((290 - XM) / XRY)), 290)],
+                 arc(385, XM, 85, XRY, math.degrees(math.asin((290 - XM) / XRY)), 300))
+_QUOTE = lambda x, y: P((x + 15, y + 130), (x - 15, y))          # noqa: E731  a comma-like tick
+_TURNED = lambda x, y: P((x - 15, y + 130), (x + 15, y))         # noqa: E731  the mirrored tick of opening quotes
+_amp_bowl = arc(285, 215, 175, 173, 150, 360)
+NEW = {
+    # letters
+    "AE": P((100, B), (330, T), (R, T)) + P((330, T), (330, B), (R, B)) + P((330, MID), (R - 30, MID))
+          + P((175, 230), (330, 230)),
+    "ae": chain(arc(215, 360, 85, XT - 360, 140, 0), [(M, 360), (M, B)])
+          + chain([(M, 240), (215, 240)], arc(215, 141, 85, 99, 90, 360)) + _E_RIGHT,
+    "OE": P((330, T), (330, B)) + chain([(R, T), (330, T)], arc(330, MID, 200, RY, 90, 270), [(330, B), (R, B)])
+          + P((330, MID), (R - 30, MID)),
+    "oe": [arc(215, XM, 85, XRY, 0, 360)] + _E_RIGHT,
+    "Oslash": [arc(M, MID, RX, RY, 0, 360)] + P((140, -20), (460, 720)),
+    "oslash": [arc(M, XM, RX, XRY, 0, 360)] + P((140, -20), (460, 540)),
+    "Eth": _D + P((40, MID), (260, MID)),
+    "dcroat": P((R, AT), (R, B)) + [arc(280, XM, 150, XRY, 0, 360)] + P((370, 610), (550, 610)),
+    "eth": [arc(M, XM, RX, XRY, 0, 360)] + P((440, 400), (250, AT)) + P((230, 560), (430, 660)),
+    "Thorn": P((L, B), (L, T)) + chain([(L, 540), (310, 540)], arc(310, 382, 160, 158, 90, -90), [(310, 224), (L, 224)]),
+    "thorn": P((L, AT), (L, DT)) + [arc(320, XM, 150, XRY, 0, 360)],
+    "germandbls": chain([(L, B), (L, 550)], arc(275, 550, 145, AT - 550, 180, 0), [(420, 500), (290, 400)])
+                  + chain([(290, 400), (330, 400)], arc(330, 221, 140, 179, 90, -90), [(330, B), (250, B)]),
+    "uni1E9E": P((L, B), (L, T), (R, T), (300, 420))
+               + chain([(300, 420), (330, 420)], arc(330, 231, 140, 189, 90, -90), [(330, B), (250, B)]),
+    "Hbar": G["H"] + P((L, 540), (R, 540)),
+    "hbar": LC["h"] + P((60, 610), (260, 610)),
+    "Lslash": G["L"] + P((50, 250), (260, 420)),
+    "lslash": LC["l"] + P((200, 330), (400, 480)),
+    # symbols and punctuation
+    "ampersand": chain(arc(280, 545, 110, 113, -40, 220), [(R + 10, B)])
+                 + chain([(364, 472), _amp_bowl[0].point(150)], _amp_bowl, [(490, 330)]),
+    "at": [arc(300, 330, 75, 110, 0, 360)] + chain([(375, 440), (375, 250)], arc(430, 250, 55, 60, 180, 360))
+          + [arc(300, 340, 190, 298, 0, 300)],
+    "asciicircum": P((170, 420), (M, T), (430, 420)),
+    "grave": P((340, 560), (260, T)),
+    "asciitilde": chain(arc(230, 330, 70, 50, 180, 0), arc(370, 330, 70, 50, 180, 360)),
+    "exclamdown": P((M, XT - 20), (M, XT)) + P((M, 360), (M, -180)),
+    "questiondown": rot180(PUN["question"], XM),
+    "cent": [arc(M, XM, RX, XRY, 45, 315)] + P((M, -60), (M, 580)),
+    "sterling": chain(arc(330, 520, 140, 138, 15, 180), [(190, 520), (190, 150), (L, B), (R, B)]) + P((L, 350), (380, 350)),
+    "yen": P((L, T), (M, 380), (R, T)) + P((M, 380), (M, B)) + P((170, 330), (430, 330)) + P((170, 200), (430, 200)),
+    "section": [arc(M, 555, 130, 103, 15, 255)] + [arc(M, 345, 140, 107, 0, 360)] + [arc(M, 135, 130, 103, 195, 435)],
+    "copyright": [arc(M, MID, 210, RY, 0, 360)] + [arc(M, MID, 95, 130, 50, 310)],
+    "registered": [arc(M, MID, 210, RY, 0, 360)] + P((240, 200), (240, 500))
+                  + chain([(240, 500), (320, 500)], arc(320, 430, 60, 70, 90, -90), [(320, 360), (240, 360)])
+                  + P((310, 360), (370, 200)),
+    "trademark": P((50, T), (250, T)) + P((150, T), (150, 430)) + P((320, 430), (320, T), (420, 540), (520, T), (520, 430)),
+    "ordfeminine": [arc(290, 500, 85, 65, 0, 360)] + chain(arc(290, 600, 85, 55, 150, 0), [(375, 600), (375, 440)])
+                   + P((200, 330), (400, 330)),
+    "ordmasculine": [arc(M, 540, 95, 110, 0, 360)] + P((200, 330), (400, 330)),
+    "guillemotleft": P((290, 420), (160, 260), (290, 100)) + P((440, 420), (310, 260), (440, 100)),
+    "guillemotright": mirror(P((290, 420), (160, 260), (290, 100)) + P((440, 420), (310, 260), (440, 100))),
+    "guilsinglleft": P((370, 420), (230, 260), (370, 100)),
+    "guilsinglright": mirror(P((370, 420), (230, 260), (370, 100))),
+    "degree": [arc(M, 560, 90, 98, 0, 360)],
+    "paragraph": P((330, T), (330, -120)) + P((430, T), (430, -120))
+                 + chain([(430, T), (260, T)], arc(260, 500, 110, 158, 90, 270), [(260, 342), (330, 342)]),
+    "periodcentered": P((M, 330), (M, 350)),
+    "multiply": P((180, 200), (420, 460)) + P((420, 200), (180, 460)),
+    "divide": P((L, 330), (R, 330)) + P((M, 480), (M, 500)) + P((M, 160), (M, 180)),
+    "minus": P((L, 330), (R, 330)),
+    "endash": P((100, 300), (500, 300)),
+    "emdash": P((42, 300), (558, 300)),
+    "quoteleft": _TURNED(M, 570),
+    "quoteright": _QUOTE(M, 570),
+    "quotesinglbase": _QUOTE(M, -70),
+    "quotedblleft": _TURNED(220, 570) + _TURNED(380, 570),
+    "quotedblright": _QUOTE(220, 570) + _QUOTE(380, 570),
+    "quotedblbase": _QUOTE(220, -70) + _QUOTE(380, -70),
+    "bullet": P((M - 30, 300), (M + 30, 300)) + P((M - 30, 360), (M + 30, 360)),
+    "ellipsis": P((120, B), (120, B + 20)) + P((M, B), (M, B + 20)) + P((480, B), (480, B + 20)),
+    "Euro": [arc(330, MID, RX, RY, 48, 312)] + P((90, 410), (380, 410)) + P((90, 290), (350, 290)),
+    "uni25CC": [P((M + 180 * math.cos(math.radians(a)) - 6, 330 + 220 * math.sin(math.radians(a))),
+                  (M + 180 * math.cos(math.radians(a)) + 6, 330 + 220 * math.sin(math.radians(a))))[0]
+                for a in range(0, 360, 30)],
+}
+NEW_ZONE = {"AE": (0, CAP), "OE": (0, CAP), "Oslash": (0, CAP), "Eth": (0, CAP), "Thorn": (0, CAP),
+            "uni1E9E": (0, CAP), "Hbar": (0, CAP), "Lslash": (0, CAP),
+            "ae": (0, XH), "oe": (0, XH), "oslash": (0, XH), "dcroat": (0, ASC), "eth": (0, ASC),
+            "thorn": (DESC, ASC), "germandbls": (0, ASC), "hbar": (0, ASC), "lslash": (0, ASC)}
+STROKE_FOR = {"copyright": 70, "registered": 60, "trademark": 60, "ordfeminine": 60, "ordmasculine": 60,
+              "degree": 70, "uni25CC": 40, "section": 76}
+
 # ---------------------------------------------------------------- accents (drawn at lowercase position)
 ACC = {
     # Marks are drawn centred on x = 300 above the x-height (or below the baseline), then
@@ -290,7 +389,7 @@ ACC = {
     "ringcomb": [arc(M, 650, 62, 55, 0, 360)],
     "hungarumlautcomb": P((175, 600), (245, 690)) + P((335, 600), (405, 690)),
     "commaaccentcomb": P((310, -70), (275, -180)),
-    "commaturnedabovecomb": P((285, 590), (320, 700)),
+    "commaturnedabovecomb": P((285, 700), (315, 590)),
     "ogonekcomb": chain([(M, 30), (M, -40)], arc(380, -40, 80, 100, 180, 300)),
     "caroncomb.alt": P((315, 700), (290, 590)),     # the apostrophe-like caron of d l t L
 }
@@ -336,6 +435,7 @@ _SPACING = {0xA8: "dieresiscomb", 0xAF: "macroncomb", 0xB4: "acutecomb", 0xB8: "
             0x2DC: "tildecomb", 0x2DA: "ringcomb", 0x2D8: "brevecomb", 0x2DB: "ogonekcomb",
             0x2D9: "dotaccentcomb", 0x2DD: "hungarumlautcomb", 0x2C6: "circumflexcomb", 0x2C7: "caroncomb"}
 _ASCENDERS = set("bdfhklt")
+TOP_X = {"j": 360, "uni0237": 360}             # where accents sit when not centred on the cell
 
 
 def _glyph_name(cp):
@@ -382,6 +482,7 @@ _LATIN_CORE_ACCENTED = "".join(chr(c) for c in _SPACING) + (
     "ȘșȚțẀẁẂẃẄẅỲỳ"
 )
 COMP = _composites(_TURKISH + [ord(c) for c in _LATIN_CORE_ACCENTED])
+COMP[_glyph_name(0x110)] = (0x110, [("Eth", 0, 0)])       # D with stroke: same drawing as Eth
 COMP_UNENCODED = {"iogonek.dotless": [("dotlessi", 0, 0), ("ogonekcomb", ADV + _OGONEK_X["i"] - M, 0)]}
 
 NAME_TO_CP = {**{c: ord(c) for c in G}, **{c: ord(c) for c in LC if len(c) == 1}, "dotlessi": 0x131,
@@ -397,6 +498,30 @@ NAME_TO_CP = {**{c: ord(c) for c in G}, **{c: ord(c) for c in LC if len(c) == 1}
               **{v: k for k, v in _MARK_FOR.items()}}
 
 
+def _cp_for(name):
+    from fontTools import agl
+    return agl.AGL2UV.get(name) or int(name[3:], 16)
+
+
+NAME_TO_CP.update({n: _cp_for(n) for n in NEW})
+
+
+class stroke_width:
+    """Temporarily draw with another stroke width (small symbols such as the registered sign)."""
+
+    def __init__(self, width):
+        self.width = width
+
+    def __enter__(self):
+        global STROKE, HS
+        self.saved = (STROKE, HS)
+        STROKE, HS = self.width, self.width / 2
+
+    def __exit__(self, *exc):
+        global STROKE, HS
+        STROKE, HS = self.saved
+
+
 NOTDEF = P((90, 0), (90, 700), (510, 700), (510, 0), (90, 0))   # hollow box, the conventional .notdef
 
 
@@ -408,6 +533,8 @@ def zone(name):
         return (0, CAP)
     if name in ALT:
         return (0, XH)
+    if name in NEW_ZONE:
+        return NEW_ZONE[name]
     if name in LC:
         top = ASC if name in ("b", "d", "f", "h", "k", "l", "t", "i", "j") else XH
         bottom = DESC if name in ("g", "j", "p", "q", "y", "uni0237") else 0
@@ -436,7 +563,7 @@ def outline(strokes, clip=(0, CAP)):
 
 def build(path, glyph_defs=None):
     upper = glyph_defs or G
-    simple = {**upper, **LC, **DIG, **PUN, **ACC, **ALT}
+    simple = {**upper, **LC, **DIG, **PUN, **NEW, **ACC, **ALT}
     encoded = {n: s for n, s in simple.items() if n in NAME_TO_CP}   # alternates stay unencoded
     order = [".notdef", "space", "uni00A0"] + sorted(simple) + sorted(COMP) + sorted(COMP_UNENCODED)
     fb = FontBuilder(UPM, isTTF=True)
@@ -445,7 +572,9 @@ def build(path, glyph_defs=None):
     fb.setupCharacterMap(cmap)
     glyphs = {".notdef": outline(NOTDEF, (-300, 900)), "space": TTGlyphPen(None).glyph(),
               "uni00A0": TTGlyphPen(None).glyph()}
-    glyphs.update({n: outline(s, zone(n)) for n, s in simple.items()})
+    for n, st in simple.items():
+        with stroke_width(STROKE_FOR.get(n, STROKE)):
+            glyphs[n] = outline(st, zone(n))
     for n in MARK_GLYPHS:                         # zero-width marks sit one advance to the left
         if glyphs[n].numberOfContours:
             glyphs[n].coordinates.translate((-ADV, 0))

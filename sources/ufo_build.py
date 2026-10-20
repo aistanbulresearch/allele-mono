@@ -318,7 +318,7 @@ def make_ufo(out_dir):
     info.openTypeOS2Panose = [2, 0, 5, 9, 0, 0, 0, 0, 0, 0]   # bProportion 9 = monospaced
     info.postscriptUnderlinePosition, info.postscriptUnderlineThickness = -150, 60
 
-    simple = {**b.G, **b.LC, **b.DIG, **b.PUN, **b.ACC, **b.ALT}
+    simple = {**b.G, **b.LC, **b.DIG, **b.PUN, **b.NEW, **b.ACC, **b.ALT}
     order = [".notdef", "space", "uni00A0"] + sorted(simple) + sorted(b.COMP) + sorted(b.COMP_UNENCODED)
 
     for name in order:
@@ -337,7 +337,8 @@ def make_ufo(out_dir):
     draw(".notdef", b.NOTDEF, (-300, 900))
     for name, strokes in simple.items():
         is_mark = name in b.MARK_GLYPHS
-        draw(name, strokes, b.zone(name), -b.ADV if is_mark else 0)
+        with b.stroke_width(b.STROKE_FOR.get(name, b.STROKE)):
+            draw(name, strokes, b.zone(name), -b.ADV if is_mark else 0)
         if is_mark:
             font[name].width = 0
         if name in b.NAME_TO_CP:
@@ -355,10 +356,14 @@ def make_ufo(out_dir):
     for n in letters:
         g = font[n]
         top = b.CAP if n in b.G else (b.ASC if n in b._ASCENDERS else b.XH)
-        g.appendAnchor({"name": "top", "x": b.M, "y": top})
+        g.appendAnchor({"name": "top", "x": b.TOP_X.get(n, b.M), "y": top})
         g.appendAnchor({"name": "bottom", "x": b.M if n not in b._COMMA_X else b._COMMA_X[n], "y": 0})
         if n in b._OGONEK_X:
             g.appendAnchor({"name": "ogonek", "x": b._OGONEK_X[n], "y": 0})
+    font["uni25CC"].appendAnchor({"name": "top", "x": b.M, "y": b.XH})       # dotted circle carries marks
+    font["uni25CC"].appendAnchor({"name": "bottom", "x": b.M, "y": 0})
+    font["uni25CC"].appendAnchor({"name": "ogonek", "x": b.M + 100, "y": 0})
+    letters.append("uni25CC")
     for n in b.MARK_GLYPHS:
         if n == "caroncomb.alt":
             continue
