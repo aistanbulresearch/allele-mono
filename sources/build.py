@@ -308,8 +308,9 @@ NEW = {
     "eth": [arc(M, XM, RX, XRY, 0, 360)] + P((440, 400), (250, AT)) + P((230, 560), (430, 660)),
     "Thorn": P((L, B), (L, T)) + chain([(L, 540), (310, 540)], arc(310, 382, 160, 158, 90, -90), [(310, 224), (L, 224)]),
     "thorn": P((L, AT), (L, DT)) + [arc(320, XM, 150, XRY, 0, 360)],
-    "germandbls": chain([(L, B), (L, 550)], arc(275, 550, 145, AT - 550, 180, 0), [(420, 500), (290, 400)])
-                  + chain([(290, 400), (330, 400)], arc(330, 221, 140, 179, 90, -90), [(330, B), (250, B)]),
+    # one continuous stroke: stem, narrow upper bowl down to the waist, wider lower bowl back to the stem
+    "germandbls": chain([(L, B), (L, 550)], arc(275, 550, 145, AT - 550, 180, -90), [(320, 402)],
+                        arc(320, 222, 150, 180, 90, -90), [(320, B), (240, B)]),
     "uni1E9E": P((L, B), (L, T), (R, T), (300, 420))
                + chain([(300, 420), (330, 420)], arc(330, 231, 140, 189, 90, -90), [(330, B), (250, B)]),
     "Hbar": G["H"] + P((L, 540), (R, 540)),
@@ -368,7 +369,11 @@ NEW_ZONE = {"AE": (0, CAP), "OE": (0, CAP), "Oslash": (0, CAP), "Eth": (0, CAP),
             "uni1E9E": (0, CAP), "Hbar": (0, CAP), "Lslash": (0, CAP),
             "ae": (0, XH), "oe": (0, XH), "oslash": (0, XH), "dcroat": (0, ASC), "eth": (0, ASC),
             "thorn": (DESC, ASC), "germandbls": (0, ASC), "hbar": (0, ASC), "lslash": (0, ASC)}
-STROKE_FOR = {"copyright": 70, "registered": 60, "trademark": 60, "ordfeminine": 60, "ordmasculine": 60,
+# marks are drawn lighter than the 84-unit stems, as is usual; dots keep the full weight
+_MARK_STROKE = {"gravecomb": 72, "acutecomb": 72, "circumflexcomb": 72, "caroncomb": 72, "macroncomb": 72,
+                "brevecomb": 72, "hungarumlautcomb": 72, "commaaccentcomb": 72, "commaturnedabovecomb": 72,
+                "caroncomb.alt": 72, "tildecomb": 66, "ringcomb": 60, "cedillacomb": 62, "ogonekcomb": 62}
+STROKE_FOR = {**_MARK_STROKE, "copyright": 70, "registered": 60, "trademark": 60, "ordfeminine": 60, "ordmasculine": 60,
               "degree": 70, "uni25CC": 40, "section": 76}
 
 # ---------------------------------------------------------------- accents (drawn at lowercase position)
@@ -379,18 +384,20 @@ ACC = {
     "dotaccentcomb": _bigdot(M),
     "dieresiscomb": P((200, DOT[0]), (200, DOT[1])) + P((400, DOT[0]), (400, DOT[1])),
     "brevecomb": [arc(M, 640, 110, 70, 180, 360)],   # tips kept clear of cap height
-    "cedillacomb": chain([(M, 10), (M, -60)], arc(M, -110, 60, 50, 90, -160)),
+    "cedillacomb": chain([(M, 10), (M, -40)], arc(M, -102, 72, 62, 90, -150)),   # open hook, lighter stroke
     "gravecomb": P((345, 600), (255, 690)),
     "acutecomb": P((255, 600), (345, 690)),
     "circumflexcomb": P((195, 600), (M, 690), (405, 600)),
     "caroncomb": P((195, 690), (M, 600), (405, 690)),
     "tildecomb": chain(arc(250, 630, 55, 40, 180, 0), arc(350, 630, 55, 40, 180, 360)),
     "macroncomb": P((195, 640), (405, 640)),
-    "ringcomb": [arc(M, 650, 62, 55, 0, 360)],
+    "ringcomb": [arc(M, 655, 78, 66, 0, 360)],                   # wide open ring, lighter stroke
     "hungarumlautcomb": P((175, 600), (245, 690)) + P((335, 600), (405, 690)),
     "commaaccentcomb": P((310, -70), (275, -180)),
     "commaturnedabovecomb": P((285, 700), (315, 590)),
-    "ogonekcomb": chain([(M, 30), (M, -40)], arc(380, -40, 80, 100, 180, 300)),
+    # ogonek: an open half circle, open on the right; the horizontal hook carries the weight,
+    # and the tip stays within the letter's right edge (see _OGONEK_X)
+    "ogonekcomb": chain([(M, 20)], arc(M + 45, -69, 70, 90, 130, 300)),
     "caroncomb.alt": P((315, 700), (290, 590)),     # the apostrophe-like caron of d l t L
 }
 MARK_GLYPHS = set(ACC)
@@ -425,7 +432,7 @@ _MARK_FOR = {0x300: "gravecomb", 0x301: "acutecomb", 0x302: "circumflexcomb", 0x
              0x30A: "ringcomb", 0x30B: "hungarumlautcomb", 0x30C: "caroncomb", 0x326: "commaaccentcomb",
              0x327: "cedillacomb", 0x328: "ogonekcomb"}
 _BELOW = {"cedillacomb", "commaaccentcomb", "ogonekcomb"}
-_OGONEK_X = {"A": 480, "E": 450, "I": 330, "U": 360, "a": 470, "e": 370, "i": 400, "u": 470}
+_OGONEK_X = {"A": 445, "E": 430, "I": 300, "U": 330, "a": 430, "e": 360, "i": 380, "u": 430}
 _COMMA_X = {"t": 260}
 # Czech/Slovak d l t L take the apostrophe-like caron beside the stem: (dx, dy) of caroncomb.alt
 _CARON_ALT = {"d": (255, 40), "l": (120, 40), "t": (80, 0), "L": (-40, 0)}
