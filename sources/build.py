@@ -145,7 +145,8 @@ G = {
     # D: short shoulders and a wide bowl (search result, separates it from G)
     "D": P((L, B), (L, T)) + chain([(L, T), (200, T)], arc(200, MID, 270, RY, 90, -90), [(200, B), (L, B)]),
     "E": P((R, T), (L, T), (L, B), (R, B)) + P((L, MID), (R - 40, MID)),
-    "F": P((R, T), (L, T), (L, B)) + P((L, MID), (R - 60, MID)),
+    # F: short arms and a lower middle arm (measured: separates it from P, E and T)
+    "F": P((420, T), (L, T), (L, B)) + P((L, 300), (340, 300)),
     # H: standard crossbar, stems pulled in by 45 (measured: separates it from N; a low bar read like h)
     "H": P((L + 45, B), (L + 45, T)) + P((R - 45, B), (R - 45, T)) + P((L + 45, MID), (R - 45, MID)),
     "I": P((L + 40, T), (R - 40, T)) + P((M, T), (M, B)) + P((L + 40, B), (R - 40, B)),

@@ -31,6 +31,7 @@ and checked by eye at 12 px (see [Measuring legibility](#measuring-legibility)).
 | C / G | C has a wide aperture; G has a short bar and a straight spur down to the baseline |
 | G / 6, 9 | 6 and 9 have straight diagonal stems |
 | H / M / N / W | M has a shallow middle vertex, W a low one; H stems are slightly narrower and N is slightly wider, so the open triangles of N stay visible |
+| F / P | F has short arms and a lower middle arm, so it stays open where P has its bowl |
 | D / G / Q | D has short shoulders and a wide bowl; Q's tail drops from the bottom and turns right |
 | i / dotless i / l / 1 / I | i has a large dot; l has a tail to the right; 1 has a flag and no base bar |
 | b / d / p / q | p and q have descender serifs (q's points right only, away from g) |
