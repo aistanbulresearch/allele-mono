@@ -175,12 +175,12 @@ G = {
 
 # ---------------------------------------------------------------- lowercase
 def _bigdot(x):
-    """i/j dot: about 120 x 114 units, larger than the stroke, so i and dotless i stay apart."""
-    return P((x - 18, DOT[0]), (x + 18, DOT[0])) + P((x - 18, DOT[1]), (x + 18, DOT[1]))
+    """i/j dot: about 144 x 124 units, set high, so i and dotless i stay apart at small sizes."""
+    return P((x - 30, DOT[0]), (x + 30, DOT[0])) + P((x - 30, DOT[1]), (x + 30, DOT[1]))
 
 
 _n_arch = chain([(L, 300)], arc(M, 300, RX, XT - 300, 180, 0), [(R, 300), (R, B)])
-DOT = (620, 650)             # skeleton y-range of the i/j dot
+DOT = (650, 690)             # skeleton y-range of the i/j dot (raised: search on i vs dotless i)
 LC = {
     # a: smaller bowl (top at 240) and a hook starting at 140 deg (search: separates a from o and e)
     # The bowl is open: its top runs flat into the stem and its right side merges
@@ -215,7 +215,8 @@ LC = {
     "p": P((L, XT), (L, DT)) + [arc(320, XM, 150, XRY, 0, 360)] + P((L - 50, DT), (L + 110, DT)),
     "q": P((R, XT), (R, DT)) + [arc(280, XM, 150, XRY, 0, 360)] + P((R, DT), (R + 70, DT)),
     # r: top-left serif only; a base bar made it read like a broken c (seen by eye at 12 px)
-    "r": P((170, XT), (170, B)) + chain([(170, 300)], arc(320, 300, 150, XT - 300, 180, 35)) + P((L - 10, XT), (170, XT)),
+    # arm shortened (ends at 55 deg, radius 130): measured further from n, still reads as r
+    "r": P((170, XT), (170, B)) + chain([(170, 300)], arc(300, 300, 130, XT - 300, 180, 55)) + P((L - 10, XT), (170, XT)),
     "s": [arc(M, XM + XRY / 2, 160, XRY / 2, 20, 270) + arc(M, XM - XRY / 2, 165, XRY / 2, 90, -140)[1:]],
     "t": chain([(260, 640), (260, 150)], arc(370, 150, 110, 150 - B, 180, 270), [(370, B), (450, B)])
          + P((L, XT), (R - 20, XT)),
@@ -292,6 +293,7 @@ _E_RIGHT = chain([(M, 290), (385 + 85 * math.cos(math.asin((290 - XM) / XRY)), 2
 _QUOTE = lambda x, y: P((x + 15, y + 130), (x - 15, y))          # noqa: E731  a comma-like tick
 _TURNED = lambda x, y: P((x - 15, y + 130), (x + 15, y))         # noqa: E731  the mirrored tick of opening quotes
 _amp_bowl = arc(285, 215, 175, 173, 150, 360)
+_S_UPPER = chain(arc(M, 520, 125, 95, 20, 270), arc(M, 330, 130, 95, 90, -90))
 NEW = {
     # letters
     "AE": P((100, B), (330, T), (R, T)) + P((330, T), (330, B), (R, B)) + P((330, MID), (R - 30, MID))
@@ -305,21 +307,22 @@ NEW = {
     "oslash": [arc(M, XM, RX, XRY, 0, 360)] + P((140, -20), (460, 540)),
     "Eth": _D + P((40, MID), (260, MID)),
     "dcroat": P((R, AT), (R, B)) + [arc(280, XM, 150, XRY, 0, 360)] + P((370, 610), (550, 610)),
-    "eth": [arc(M, XM, RX, XRY, 0, 360)] + P((440, 400), (250, AT)) + P((230, 560), (430, 660)),
+    "eth": [arc(M, XM, RX, XRY, 0, 360)] + P((455, 330), (250, AT)) + P((230, 560), (430, 660)),
     "Thorn": P((L, B), (L, T)) + chain([(L, 540), (310, 540)], arc(310, 382, 160, 158, 90, -90), [(310, 224), (L, 224)]),
     "thorn": P((L, AT), (L, DT)) + [arc(320, XM, 150, XRY, 0, 360)],
     # one continuous stroke: stem, narrow upper bowl down to the waist, wider lower bowl back to the stem
     "germandbls": chain([(L, B), (L, 550)], arc(275, 550, 145, AT - 550, 180, -90), [(320, 402)],
                         arc(320, 222, 150, 180, 90, -90), [(320, B), (240, B)]),
-    "uni1E9E": P((L, B), (L, T), (R, T), (300, 420))
-               + chain([(300, 420), (330, 420)], arc(330, 231, 140, 189, 90, -90), [(330, B), (250, B)]),
+    "uni1E9E": chain([(L, B), (L, T), (R, T), (300, 420), (330, 420)], arc(330, 231, 140, 189, 90, -90),
+                     [(330, B), (250, B)]),
     "Hbar": G["H"] + P((L, 540), (R, 540)),
     "hbar": LC["h"] + P((60, 610), (260, 610)),
     "Lslash": G["L"] + P((50, 250), (260, 420)),
     "lslash": LC["l"] + P((200, 330), (400, 480)),
     # symbols and punctuation
-    "ampersand": chain(arc(280, 545, 110, 113, -40, 220), [(R + 10, B)])
-                 + chain([(364, 472), _amp_bowl[0].point(150)], _amp_bowl, [(490, 330)]),
+    # one continuous stroke: arm, lower bowl, up through the crossing, round the upper loop, leg
+    "ampersand": chain([(490, 330)], arc(285, 215, 175, 173, 360, 150), [(280, 432)],
+                       arc(280, 545, 110, 113, 270, 580), [(R + 10, B)]),
     "at": [arc(300, 330, 75, 110, 0, 360)] + chain([(375, 440), (375, 250)], arc(430, 250, 55, 60, 180, 360))
           + [arc(300, 340, 190, 298, 0, 300)],
     "asciicircum": P((170, 420), (M, T), (430, 420)),
@@ -330,7 +333,8 @@ NEW = {
     "cent": [arc(M, XM, RX, XRY, 45, 315)] + P((M, -60), (M, 580)),
     "sterling": chain(arc(330, 520, 140, 138, 15, 180), [(190, 520), (190, 150), (L, B), (R, B)]) + P((L, 350), (380, 350)),
     "yen": P((L, T), (M, 380), (R, T)) + P((M, 380), (M, B)) + P((170, 330), (430, 330)) + P((170, 200), (430, 200)),
-    "section": [arc(M, 555, 130, 103, 15, 255)] + [arc(M, 345, 140, 107, 0, 360)] + [arc(M, 135, 130, 103, 195, 435)],
+    # two S curves, the second a half-turn copy of the first; they share the middle loop exactly
+    "section": _S_UPPER + rot180(_S_UPPER, 330),
     "copyright": [arc(M, MID, 210, RY, 0, 360)] + [arc(M, MID, 95, 130, 50, 310)],
     "registered": [arc(M, MID, 210, RY, 0, 360)] + P((240, 200), (240, 500))
                   + chain([(240, 500), (320, 500)], arc(320, 430, 60, 70, 90, -90), [(320, 360), (240, 360)])
@@ -344,8 +348,8 @@ NEW = {
     "guilsinglleft": P((370, 420), (230, 260), (370, 100)),
     "guilsinglright": mirror(P((370, 420), (230, 260), (370, 100))),
     "degree": [arc(M, 560, 90, 98, 0, 360)],
-    "paragraph": P((330, T), (330, -120)) + P((430, T), (430, -120))
-                 + chain([(430, T), (260, T)], arc(260, 500, 110, 158, 90, 270), [(260, 342), (330, 342)]),
+    "paragraph": P((310, T), (310, -120)) + P((450, T), (450, -120))      # stems far enough apart to read
+                 + chain([(450, T), (268, T)], arc(268, 500, 110, 158, 90, 270), [(268, 342), (310, 342)]),
     "periodcentered": P((M, 330), (M, 350)),
     "multiply": P((180, 200), (420, 460)) + P((420, 200), (180, 460)),
     "divide": P((L, 330), (R, 330)) + P((M, 480), (M, 500)) + P((M, 160), (M, 180)),

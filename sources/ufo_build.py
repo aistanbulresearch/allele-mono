@@ -290,6 +290,53 @@ def _drop_redundant_points(glyph):
                     break
 
 
+def _merge_tiny_segments(glyph, tol=10):
+    """Fold segments shorter than `tol` units into a neighbour. They appear where the boolean
+    union cuts a curve a hair away from another stroke's edge (the hooks of the section sign)."""
+    from ufoLib2.objects import Point
+    for contour in glyph.contours:
+        pts = contour.points
+        on = [i for i, p in enumerate(pts) if p.type]
+        if len(on) < 3:
+            continue
+        segs = []                                   # [type, [offcurves], (x, y)]
+        for k, i in enumerate(on):
+            j = on[k - 1]
+            offs = [(pts[m].x, pts[m].y) for m in range((j + 1) % len(pts), i) if pts[m].type is None] \
+                if j < i else [(pts[m].x, pts[m].y) for m in list(range(j + 1, len(pts))) + list(range(0, i))
+                               if pts[m].type is None]
+            segs.append([pts[i].type, offs, (pts[i].x, pts[i].y)])
+        changed = True
+        while changed and len(segs) > 3:
+            changed = False
+            for k in range(len(segs)):
+                start = segs[k - 1][2]
+                typ, offs, end = segs[k]
+                if math.hypot(end[0] - start[0], end[1] - start[1]) >= tol:
+                    continue
+                prev, nxt = segs[k - 1], segs[(k + 1) % len(segs)]
+                d = (end[0] - start[0], end[1] - start[1])
+                if prev[0] == "curve" and prev[1]:
+                    a1, a2 = prev[1]
+                    prev[1] = [a1, (a2[0] + d[0], a2[1] + d[1])]
+                    prev[2] = end
+                elif nxt[0] == "curve" and nxt[1]:
+                    c1, c2 = nxt[1]
+                    nxt[1] = [(c1[0] - d[0], c1[1] - d[1]), c2]
+                    prev[2] = start
+                else:
+                    mid = ((start[0] + end[0]) / 2, (start[1] + end[1]) / 2)
+                    prev[2] = mid
+                del segs[k]
+                changed = True
+                break
+        new = []
+        for typ, offs, end in segs:
+            new += [Point(round(x), round(y)) for x, y in offs]
+            new.append(Point(round(end[0]), round(end[1]), type=typ))
+        contour.points[:] = new
+
+
 def make_ufo(out_dir):
     font = ufoLib2.Font()
     info = font.info
@@ -332,6 +379,8 @@ def make_ufo(out_dir):
         glyph = font[name]
         glyph.clearContours()
         path.draw(QuadToCubicPen(RoundingPen(TransformPen(glyph.getPen(), (1, 0, 0, 1, dx, 0)))))
+        _drop_redundant_points(glyph)
+        _merge_tiny_segments(glyph)
         _drop_redundant_points(glyph)
 
     draw(".notdef", b.NOTDEF, (-300, 900))
