@@ -184,8 +184,10 @@ LC = {
     "b": P((L, AT), (L, B)) + [arc(320, XM, 150, XRY, 0, 360)],
     "c": [arc(M, XM, RX, XRY, 45, 315)],
     "d": P((R, AT), (R, B)) + [arc(280, XM, 150, XRY, 0, 360)],
-    # e: bar raised to 290 and a wider aperture (ends at 300 deg): separates e from o and a
-    "e": P((L, 290), (R, 290)) + [arc(M, XM, RX, XRY, 3, 300)],
+    # e: bar raised to 290 and a wider aperture (ends at 300 deg): separates e from o and a.
+    # Bar and bowl are one stroke, so the bowl starts exactly where the bar meets it.
+    "e": chain([(L + 20, 290), (M + RX * math.cos(math.asin((290 - XM) / XRY)), 290)],
+               arc(M, XM, RX, XRY, math.degrees(math.asin((290 - XM) / XRY)), 300)),
     "f": chain([(260, B), (260, 560)], arc(370, 560, 110, AT - 560, 180, 40)) + P((L + 20, XT), (R - 30, XT)),
     "g": [arc(285, XM, 145, XRY, 0, 360)] + chain([(R, XT), (R, -60)], arc(M, -60, RX, -60 - DT, 0, -160)),
     "h": P((L, AT), (L, B)) + _n_arch,
@@ -223,7 +225,7 @@ DIG = {
     # zero: dotted, so it never reads as O (and avoids the slashed-zero / Ø clash)
     "zero": [arc(M, MID, 140, RY, 0, 360)] + P((M, 290), (M, 410)),    # narrower than O, dotted
     # one: flag, no base bar (measured: a base bar made it collide with i and I)
-    "one": P((M, T), (M, B)) + P((M, T), (L + 20, 560)),
+    "one": P((L + 20, 560), (M, T), (M, B)),        # flag and stem as one stroke: a clean mitred top
     "two": chain(arc(M, 495, 165, T - 495, 160, -20), [(L, B), (R, B)]),
     "three": [arc(M, 505, 160, 153, 160, -90) + arc(M, 197, 170, 155, 90, -160)[1:]] + P((230, 352), (M, 352)),
     "four": P((390, B), (390, T), (L, 220), (R + 10, 220)),

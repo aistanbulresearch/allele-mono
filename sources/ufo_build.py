@@ -194,10 +194,14 @@ def cap_kind(s, at_end, zone, others):
     so no nub sticks out; otherwise the prototype's 'square' cap."""
     p = seg_end(s) if at_end else seg_start(s)
     d = tangent(s, at_end)
+    for o in others:
+        on_stroke = _dist_to_polyline(p, o) < 1.05 * b.HS
+        at_its_end = min(math.hypot(p[0] - q[0], p[1] - q[1]) for q in (o[0], o[-1])) < b.HS
+        if on_stroke and not at_its_end:
+            return "butt"       # ends in the middle of another stroke: crossbars, arms, a leg
+    # two strokes meeting at their ends form a corner (B, D, P, R): square caps fill it
     if abs(d[1]) > 0.2 and (p[1] - zone[0] < 1.5 * b.HS or zone[1] - p[1] < 1.5 * b.HS):
         return "long"
-    if any(_dist_to_polyline(p, o) < 1.05 * b.HS for o in others):
-        return "butt"
     return "square"
 
 
@@ -272,7 +276,14 @@ def _drop_redundant_points(glyph):
                     continue                      # only points joining two straight segments
                 ax, ay, bx, by = p.x - prev.x, p.y - prev.y, nxt.x - p.x, nxt.y - p.y
                 la, lb = math.hypot(ax, ay), math.hypot(bx, by)
-                if la == 0 or lb == 0 or (abs(ax * by - ay * bx) / (la * lb) < 0.035 and ax * bx + ay * by > 0):
+                cross = abs(ax * by - ay * bx)
+                straight = la and lb and cross / (la * lb) < 0.05 and ax * bx + ay * by > 0     # under ~3 degrees
+                span = math.hypot(nxt.x - prev.x, nxt.y - prev.y)
+                nx, ny = abs(nxt.x - prev.x), abs(nxt.y - prev.y)
+                makes_semi_axis = (0 < nx <= 3 and ny > 20) or (0 < ny <= 3 and nx > 20)
+                sliver = (la and lb and span and min(la, lb) < 12 and cross / span < 4
+                          and not makes_semi_axis)                    # tiny step where an
+                if la == 0 or lb == 0 or straight or sliver:                 # oblique stroke meets an arc
                     del pts[i]
                     changed = True
                     break
