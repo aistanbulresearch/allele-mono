@@ -8,6 +8,11 @@ Allele Mono is built around the same problem: letters that look alike at small s
 dense sequence alignments, FASTA files and source code.
 
 Designed by Ozge A. Cavus, AIstanbul Research Group.
+
+AI disclosure: an AI assistant (Anthropic's Claude) wrote the build code that generates the outlines
+and ran the legibility measurements. The designer set the goals and selected and approved every
+design decision.
+
 Licensed under the [SIL Open Font License 1.1](OFL.txt).
 
 ## Status
