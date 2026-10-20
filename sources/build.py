@@ -323,8 +323,10 @@ NEW = {
     "Lslash": G["L"] + P((50, 250), (260, 420)),
     "lslash": LC["l"] + P((200, 330), (400, 480)),
     # Indian rupee sign: two bars, a P-like bowl hanging from the top bar, and a diagonal leg
-    "uni20B9": P((L, T), (R, T)) + chain([(L, T), (250, T)], arc(250, 509, 150, T - 509, 90, -90), [(250, 360), (L, 360)])
-               + P((L, 530), (R, 530)) + P((L + 40, 360), (R, B)),
+    # one stroke from the top bar round the bowl into the leg, so the leg has no cap sticking out
+    "uni20B9": P((L, T), (R, T)) + chain([(L, T), (250, T)], arc(250, 509, 150, T - 509, 90, -90),
+                                         [(250, 360), (L + 10, 360), (R, B)])
+               + P((L, 530), (R, 530)),
     "longs": chain([(260, B), (260, 560)], arc(370, 560, 110, AT - 560, 180, 40)),      # f without its bar
     "Ldot": G["L"] + P((340, 330), (340, 350)),                                          # Catalan
     "ldot": LC["l"] + P((450, 260), (450, 280)),
