@@ -42,10 +42,56 @@ XM = (B + XT) / 2            # lowercase vertical centre
 XRY = (XT - B) / 2           # lowercase round half-height
 
 
-def arc(cx, cy, rx, ry, a0, a1, step=4):
-    n = max(8, int(abs(a1 - a0) / step))
-    return [(cx + rx * math.cos(math.radians(a0 + (a1 - a0) * i / n)),
-             cy + ry * math.sin(math.radians(a0 + (a1 - a0) * i / n))) for i in range(n + 1)]
+class ArcSeg:
+    """An elliptical arc kept as geometry, so it can become a true Bezier curve.
+
+    Angles in degrees, counter-clockwise from +x (y up). sample() reproduces the
+    polyline the prototype used, so the shapely path stays bit-for-bit the same.
+    """
+    __slots__ = ("cx", "cy", "rx", "ry", "a0", "a1", "skip_first")
+
+    def __init__(self, cx, cy, rx, ry, a0, a1, skip_first=False):
+        self.cx, self.cy, self.rx, self.ry, self.a0, self.a1 = cx, cy, rx, ry, a0, a1
+        self.skip_first = skip_first
+
+    def point(self, a):
+        return (self.cx + self.rx * math.cos(math.radians(a)), self.cy + self.ry * math.sin(math.radians(a)))
+
+    def sample(self, step=4):
+        n = max(8, int(abs(self.a1 - self.a0) / step))
+        return [self.point(self.a0 + (self.a1 - self.a0) * i / n) for i in range(n + 1)]
+
+    def mirrored(self):
+        return ArcSeg(2 * M - self.cx, self.cy, self.rx, self.ry, 180 - self.a0, 180 - self.a1, self.skip_first)
+
+    def beziers(self):
+        """Cubic Bezier approximation, split into pieces of at most 90 degrees."""
+        total = self.a1 - self.a0
+        n = max(1, math.ceil(abs(total) / 90 - 1e-9))
+        out = []
+        for i in range(n):
+            t0 = math.radians(self.a0 + total * i / n)
+            t1 = math.radians(self.a0 + total * (i + 1) / n)
+            k = 4 / 3 * math.tan((t1 - t0) / 4)
+            p0 = (self.cx + self.rx * math.cos(t0), self.cy + self.ry * math.sin(t0))
+            p3 = (self.cx + self.rx * math.cos(t1), self.cy + self.ry * math.sin(t1))
+            c1 = (p0[0] - k * self.rx * math.sin(t0), p0[1] + k * self.ry * math.cos(t0))
+            c2 = (p3[0] + k * self.rx * math.sin(t1), p3[1] - k * self.ry * math.cos(t1))
+            out.append((c1, c2, p3))
+        return out
+
+
+class ArcList(list):
+    """arc(...)[1:] meant 'drop the duplicated first point'; keep the arc, flag it."""
+
+    def __getitem__(self, i):
+        if isinstance(i, slice) and i == slice(1, None, None):
+            return ArcList([ArcSeg(s.cx, s.cy, s.rx, s.ry, s.a0, s.a1, True) for s in self])
+        return list.__getitem__(self, i)
+
+
+def arc(cx, cy, rx, ry, a0, a1):
+    return ArcList([ArcSeg(cx, cy, rx, ry, a0, a1)])
 
 
 def P(*pts):
@@ -63,7 +109,21 @@ def chain(*parts):
 
 
 def mirror(strokes):
-    return [[(2 * M - x, y) for x, y in s] for s in strokes]
+    return [[it.mirrored() if isinstance(it, ArcSeg) else (2 * M - it[0], it[1]) for it in s] for s in strokes]
+
+
+def sample(stroke):
+    """Stroke (points and ArcSegs) -> polyline, exactly as the prototype sampled it."""
+    out = []
+    for it in stroke:
+        if isinstance(it, ArcSeg):
+            pts = it.sample()
+            if it.skip_first or (out and out[-1] == pts[0]):
+                pts = pts[1:]
+            out.extend(pts)
+        else:
+            out.append(it)
+    return out
 
 
 RX, RY = R - M, (T - B) / 2
@@ -211,7 +271,7 @@ PUN = {
 ACC = {
     "dotaccentcomb": _bigdot(M),
     "dieresiscomb": P((200, DOT[0]), (200, DOT[1])) + P((400, DOT[0]), (400, DOT[1])),
-    "brevecomb": [arc(M, 660, 110, 70, 180, 360)],
+    "brevecomb": [arc(M, 640, 110, 70, 180, 360)],   # tips kept clear of cap height
     "cedillacomb": chain([(M, 10), (M, -60)], arc(M, -110, 60, 50, 90, -160)),
 }
 UC_SHIFT = CAP - XH          # accents move up by this much over capitals
@@ -277,7 +337,7 @@ def zone(name):
 
 
 def outline(strokes, clip=(0, CAP)):
-    geom = unary_union([LineString(s).buffer(HS, cap_style="square", join_style="mitre", mitre_limit=2.2)
+    geom = unary_union([LineString(sample(s)).buffer(HS, cap_style="square", join_style="mitre", mitre_limit=2.2)
                         for s in strokes])
     geom = geom.intersection(box(-200, clip[0], ADV + 200, clip[1])).simplify(1.5)
     polys = list(geom.geoms) if isinstance(geom, MultiPolygon) else [geom]

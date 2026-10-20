@@ -16,8 +16,7 @@ Licensed under the [SIL Open Font License 1.1](OFL.txt).
 
 - Character set: 106 characters (A-Z, a-z, 0-9, Turkish letters, basic punctuation).
   The Google Fonts minimum (GF Latin Core) is 319.
-- Outlines are a prototype: curves are approximated with short straight segments.
-  A proper curve-based source pipeline is the next milestone.
+- Outlines are true cubic curves with points on extrema, built from a UFO source with fontmake.
 - Autohinted with ttfautohint.
 
 ## Design decisions
@@ -58,6 +57,22 @@ A claim that Allele Mono is easier to read needs a study with human readers.
 
 The `sources/search_*.py` scripts are the parameter searches used to choose the shapes above.
 
+## How the font is made
+
+Each glyph is described in `sources/build.py` as a skeleton: centre lines made of straight
+segments and elliptical arcs, drawn with one constant stroke width.
+`sources/ufo_build.py` turns the skeletons into outlines: straight segments become rectangles,
+arcs become sectors between two concentric ellipses (true Bezier curves, split at the axis
+angles so every curve ends on an extremum), corners get mitre joins and open ends square caps.
+The pieces are merged with a boolean union and written to the UFO source
+`sources/AlleleMono-Regular.ufo`, which any font editor can open.
+
+The UFO is generated, so **edit `sources/build.py`, not the UFO**: rebuilding overwrites
+manual changes to the UFO.
+
+`sources/build.py` can also write a quick polygon-outline prototype on its own
+(`python3 sources/build.py out.ttf`); the search scripts use it.
+
 ## Building
 
 ```sh
@@ -65,7 +80,8 @@ pip install -r requirements.txt
 sh make.sh
 ```
 
-The font is written to `fonts/ttf/AlleleMono-Regular.ttf`.
+This regenerates the UFO, compiles it with fontmake, autohints it, and writes
+`fonts/ttf/AlleleMono-Regular.ttf`.
 
 ## License
 

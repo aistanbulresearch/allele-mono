@@ -1,0 +1,7 @@
+
+languagesystem DFLT dflt;
+languagesystem latn dflt;
+feature ss01 {
+    featureNames { name "R-form r"; };
+    sub r by r.ss01;
+} ss01;

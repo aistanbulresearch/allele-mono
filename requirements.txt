@@ -6,3 +6,7 @@ pillow>=10
 numpy>=1.26
 # optional: checking OpenType features
 uharfbuzz>=0.40
+# curve pipeline (sources/ufo_build.py) and compilation
+skia-pathops>=0.8
+ufoLib2>=0.16
+fontmake>=3.7
