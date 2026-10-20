@@ -22,7 +22,7 @@ FAMILY = "Allele Mono"
 DESIGNER = "Ozge A. Cavus - AIstanbul Research Group"
 REPO_URL = "https://github.com/aistanbulresearch/allele-mono"
 PSNAME = "AlleleMono-Regular"
-VERSION = "0.100"
+VERSION = "1.000"
 COPYRIGHT = f"Copyright 2026 The Allele Mono Project Authors ({REPO_URL})"
 
 UPM = 1000

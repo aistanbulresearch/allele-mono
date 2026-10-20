@@ -17,7 +17,7 @@ Licensed under the [SIL Open Font License 1.1](OFL.txt).
 
 ## Status
 
-**Draft, version 0.100. Not yet ready for Google Fonts submission.**
+**Version 1.000.**
 
 - Character set: the full Google Fonts minimum set, GF Latin Core (319 characters), plus the
   auxiliary letters of several European orthographies (for example Dutch IJ, Catalan L with
@@ -91,6 +91,7 @@ The repository follows the [Google Fonts project template](https://github.com/go
 make ufo     # regenerate sources/AlleleMono-Regular.ufo after editing sources/build.py
 make build   # compile the UFO with gftools builder into fonts/ttf and fonts/webfonts
 make test    # check the fonts with fontspector (needs: cargo binstall fontspector)
+python3 sources/specimen.py   # redraw documentation/specimen_all.png
 ```
 
 `make` creates a Python virtual environment from `requirements.txt` on first use.
