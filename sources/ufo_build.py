@@ -422,7 +422,17 @@ def make_ufo(out_dir):
             continue
         kind = "ogonek" if n == "ogonekcomb" else ("bottom" if n in b._BELOW else "top")
         font[n].appendAnchor({"name": "_" + kind, "x": b.M - b.ADV, "y": 0 if kind != "top" else b.XH})
-    font.lib["public.openTypeCategories"] = {**{n: "base" for n in letters},
+    # stacking: each top mark also gets a "top" anchor just above itself (mark-to-mark), so a second
+    # accent clears the first; composites inherit anchors from their parts (propagateAnchors filter)
+    tops = [n for n in b.MARK_GLYPHS if n != "caroncomb.alt" and n not in b._BELOW and n != "ogonekcomb"
+            and font[n].contours]
+    bounds = {n: font[n].getBounds(font) for n in tops}
+    lift = sorted(bb.yMin - b.XH for bb in bounds.values())[len(tops) // 2]   # usual gap under a mark
+    for n in tops:
+        font[n].appendAnchor({"name": "top", "x": b.M - b.ADV, "y": round(bounds[n].yMax + 50 - lift)})
+    font.lib["com.github.googlei18n.ufo2ft.filters"] = [{"name": "propagateAnchors", "pre": True}]
+    composed = [n for n in list(b.COMP) + list(b.COMP_UNENCODED) if n not in b.MARK_GLYPHS]
+    font.lib["public.openTypeCategories"] = {**{n: "base" for n in letters + composed},
                                              **{n: "mark" for n in b.MARK_GLYPHS}}
 
     font.features.text = b.FEATURES

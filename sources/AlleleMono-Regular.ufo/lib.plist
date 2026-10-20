@@ -2,6 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
+    <key>com.github.googlei18n.ufo2ft.filters</key>
+    <array>
+      <dict>
+        <key>name</key>
+        <string>propagateAnchors</string>
+        <key>pre</key>
+        <true/>
+      </dict>
+    </array>
     <key>public.glyphOrder</key>
     <array>
       <string>.notdef</string>
@@ -38,9 +47,11 @@
       <string>H</string>
       <string>Hbar</string>
       <string>I</string>
+      <string>IJ</string>
       <string>J</string>
       <string>K</string>
       <string>L</string>
+      <string>Ldot</string>
       <string>Lslash</string>
       <string>M</string>
       <string>N</string>
@@ -109,10 +120,13 @@
       <string>hbar</string>
       <string>hyphen</string>
       <string>i</string>
+      <string>ij</string>
       <string>j</string>
       <string>k</string>
       <string>l</string>
+      <string>ldot</string>
       <string>less</string>
+      <string>longs</string>
       <string>lslash</string>
       <string>m</string>
       <string>minus</string>
@@ -188,6 +202,7 @@
       <string>Dcaron</string>
       <string>Dcroat</string>
       <string>Eacute</string>
+      <string>Ebreve</string>
       <string>Ecaron</string>
       <string>Ecircumflex</string>
       <string>Edieresis</string>
@@ -196,33 +211,40 @@
       <string>Emacron</string>
       <string>Eogonek</string>
       <string>Gbreve</string>
+      <string>Gcaron</string>
       <string>Gdotaccent</string>
       <string>Iacute</string>
+      <string>Ibreve</string>
       <string>Icircumflex</string>
       <string>Idieresis</string>
       <string>Idotaccent</string>
       <string>Igrave</string>
       <string>Imacron</string>
       <string>Iogonek</string>
+      <string>Itilde</string>
       <string>Lacute</string>
       <string>Lcaron</string>
       <string>Nacute</string>
       <string>Ncaron</string>
       <string>Ntilde</string>
       <string>Oacute</string>
+      <string>Obreve</string>
       <string>Ocircumflex</string>
       <string>Odieresis</string>
       <string>Ograve</string>
       <string>Ohungarumlaut</string>
       <string>Omacron</string>
+      <string>Oslashacute</string>
       <string>Otilde</string>
       <string>Racute</string>
       <string>Rcaron</string>
       <string>Sacute</string>
       <string>Scaron</string>
       <string>Scedilla</string>
+      <string>Scircumflex</string>
       <string>Tcaron</string>
       <string>Uacute</string>
+      <string>Ubreve</string>
       <string>Ucircumflex</string>
       <string>Udieresis</string>
       <string>Ugrave</string>
@@ -230,6 +252,7 @@
       <string>Umacron</string>
       <string>Uogonek</string>
       <string>Uring</string>
+      <string>Utilde</string>
       <string>Wacute</string>
       <string>Wcircumflex</string>
       <string>Wdieresis</string>
@@ -263,6 +286,7 @@
       <string>dieresis</string>
       <string>dotaccent</string>
       <string>eacute</string>
+      <string>ebreve</string>
       <string>ecaron</string>
       <string>ecircumflex</string>
       <string>edieresis</string>
@@ -271,14 +295,17 @@
       <string>emacron</string>
       <string>eogonek</string>
       <string>gbreve</string>
+      <string>gcaron</string>
       <string>gdotaccent</string>
       <string>hungarumlaut</string>
       <string>iacute</string>
+      <string>ibreve</string>
       <string>icircumflex</string>
       <string>idieresis</string>
       <string>igrave</string>
       <string>imacron</string>
       <string>iogonek</string>
+      <string>itilde</string>
       <string>lacute</string>
       <string>lcaron</string>
       <string>macron</string>
@@ -286,12 +313,14 @@
       <string>ncaron</string>
       <string>ntilde</string>
       <string>oacute</string>
+      <string>obreve</string>
       <string>ocircumflex</string>
       <string>odieresis</string>
       <string>ogonek</string>
       <string>ograve</string>
       <string>ohungarumlaut</string>
       <string>omacron</string>
+      <string>oslashacute</string>
       <string>otilde</string>
       <string>racute</string>
       <string>rcaron</string>
@@ -299,9 +328,11 @@
       <string>sacute</string>
       <string>scaron</string>
       <string>scedilla</string>
+      <string>scircumflex</string>
       <string>tcaron</string>
       <string>tilde</string>
       <string>uacute</string>
+      <string>ubreve</string>
       <string>ucircumflex</string>
       <string>udieresis</string>
       <string>ugrave</string>
@@ -315,14 +346,27 @@
       <string>uni013C</string>
       <string>uni0145</string>
       <string>uni0146</string>
+      <string>uni0156</string>
+      <string>uni0157</string>
       <string>uni0162</string>
       <string>uni0163</string>
+      <string>uni01CD</string>
+      <string>uni01CE</string>
+      <string>uni01D3</string>
+      <string>uni01D4</string>
+      <string>uni01E8</string>
+      <string>uni01E9</string>
       <string>uni0218</string>
       <string>uni0219</string>
       <string>uni021A</string>
       <string>uni021B</string>
+      <string>uni021E</string>
+      <string>uni021F</string>
+      <string>uni1EBC</string>
+      <string>uni1EBD</string>
       <string>uogonek</string>
       <string>uring</string>
+      <string>utilde</string>
       <string>wacute</string>
       <string>wcircumflex</string>
       <string>wdieresis</string>
@@ -340,21 +384,93 @@
     <dict>
       <key>A</key>
       <string>base</string>
+      <key>Aacute</key>
+      <string>base</string>
+      <key>Abreve</key>
+      <string>base</string>
+      <key>Acircumflex</key>
+      <string>base</string>
+      <key>Adieresis</key>
+      <string>base</string>
+      <key>Agrave</key>
+      <string>base</string>
+      <key>Amacron</key>
+      <string>base</string>
+      <key>Aogonek</key>
+      <string>base</string>
+      <key>Aring</key>
+      <string>base</string>
+      <key>Atilde</key>
+      <string>base</string>
       <key>B</key>
       <string>base</string>
       <key>C</key>
       <string>base</string>
+      <key>Cacute</key>
+      <string>base</string>
+      <key>Ccaron</key>
+      <string>base</string>
+      <key>Ccedilla</key>
+      <string>base</string>
+      <key>Cdotaccent</key>
+      <string>base</string>
       <key>D</key>
       <string>base</string>
+      <key>Dcaron</key>
+      <string>base</string>
+      <key>Dcroat</key>
+      <string>base</string>
       <key>E</key>
+      <string>base</string>
+      <key>Eacute</key>
+      <string>base</string>
+      <key>Ebreve</key>
+      <string>base</string>
+      <key>Ecaron</key>
+      <string>base</string>
+      <key>Ecircumflex</key>
+      <string>base</string>
+      <key>Edieresis</key>
+      <string>base</string>
+      <key>Edotaccent</key>
+      <string>base</string>
+      <key>Egrave</key>
+      <string>base</string>
+      <key>Emacron</key>
+      <string>base</string>
+      <key>Eogonek</key>
       <string>base</string>
       <key>F</key>
       <string>base</string>
       <key>G</key>
       <string>base</string>
+      <key>Gbreve</key>
+      <string>base</string>
+      <key>Gcaron</key>
+      <string>base</string>
+      <key>Gdotaccent</key>
+      <string>base</string>
       <key>H</key>
       <string>base</string>
       <key>I</key>
+      <string>base</string>
+      <key>Iacute</key>
+      <string>base</string>
+      <key>Ibreve</key>
+      <string>base</string>
+      <key>Icircumflex</key>
+      <string>base</string>
+      <key>Idieresis</key>
+      <string>base</string>
+      <key>Idotaccent</key>
+      <string>base</string>
+      <key>Igrave</key>
+      <string>base</string>
+      <key>Imacron</key>
+      <string>base</string>
+      <key>Iogonek</key>
+      <string>base</string>
+      <key>Itilde</key>
       <string>base</string>
       <key>J</key>
       <string>base</string>
@@ -362,11 +478,39 @@
       <string>base</string>
       <key>L</key>
       <string>base</string>
+      <key>Lacute</key>
+      <string>base</string>
+      <key>Lcaron</key>
+      <string>base</string>
       <key>M</key>
       <string>base</string>
       <key>N</key>
       <string>base</string>
+      <key>Nacute</key>
+      <string>base</string>
+      <key>Ncaron</key>
+      <string>base</string>
+      <key>Ntilde</key>
+      <string>base</string>
       <key>O</key>
+      <string>base</string>
+      <key>Oacute</key>
+      <string>base</string>
+      <key>Obreve</key>
+      <string>base</string>
+      <key>Ocircumflex</key>
+      <string>base</string>
+      <key>Odieresis</key>
+      <string>base</string>
+      <key>Ograve</key>
+      <string>base</string>
+      <key>Ohungarumlaut</key>
+      <string>base</string>
+      <key>Omacron</key>
+      <string>base</string>
+      <key>Oslashacute</key>
+      <string>base</string>
+      <key>Otilde</key>
       <string>base</string>
       <key>P</key>
       <string>base</string>
@@ -374,38 +518,130 @@
       <string>base</string>
       <key>R</key>
       <string>base</string>
+      <key>Racute</key>
+      <string>base</string>
+      <key>Rcaron</key>
+      <string>base</string>
       <key>S</key>
+      <string>base</string>
+      <key>Sacute</key>
+      <string>base</string>
+      <key>Scaron</key>
+      <string>base</string>
+      <key>Scedilla</key>
+      <string>base</string>
+      <key>Scircumflex</key>
       <string>base</string>
       <key>T</key>
       <string>base</string>
+      <key>Tcaron</key>
+      <string>base</string>
       <key>U</key>
+      <string>base</string>
+      <key>Uacute</key>
+      <string>base</string>
+      <key>Ubreve</key>
+      <string>base</string>
+      <key>Ucircumflex</key>
+      <string>base</string>
+      <key>Udieresis</key>
+      <string>base</string>
+      <key>Ugrave</key>
+      <string>base</string>
+      <key>Uhungarumlaut</key>
+      <string>base</string>
+      <key>Umacron</key>
+      <string>base</string>
+      <key>Uogonek</key>
+      <string>base</string>
+      <key>Uring</key>
+      <string>base</string>
+      <key>Utilde</key>
       <string>base</string>
       <key>V</key>
       <string>base</string>
       <key>W</key>
       <string>base</string>
+      <key>Wacute</key>
+      <string>base</string>
+      <key>Wcircumflex</key>
+      <string>base</string>
+      <key>Wdieresis</key>
+      <string>base</string>
+      <key>Wgrave</key>
+      <string>base</string>
       <key>X</key>
       <string>base</string>
       <key>Y</key>
       <string>base</string>
+      <key>Yacute</key>
+      <string>base</string>
+      <key>Ycircumflex</key>
+      <string>base</string>
+      <key>Ydieresis</key>
+      <string>base</string>
+      <key>Ygrave</key>
+      <string>base</string>
       <key>Z</key>
+      <string>base</string>
+      <key>Zacute</key>
+      <string>base</string>
+      <key>Zcaron</key>
+      <string>base</string>
+      <key>Zdotaccent</key>
       <string>base</string>
       <key>a</key>
       <string>base</string>
+      <key>aacute</key>
+      <string>base</string>
+      <key>abreve</key>
+      <string>base</string>
+      <key>acircumflex</key>
+      <string>base</string>
+      <key>acute</key>
+      <string>base</string>
       <key>acutecomb</key>
       <string>mark</string>
+      <key>adieresis</key>
+      <string>base</string>
+      <key>agrave</key>
+      <string>base</string>
+      <key>amacron</key>
+      <string>base</string>
+      <key>aogonek</key>
+      <string>base</string>
+      <key>aring</key>
+      <string>base</string>
+      <key>atilde</key>
+      <string>base</string>
       <key>b</key>
+      <string>base</string>
+      <key>breve</key>
       <string>base</string>
       <key>brevecomb</key>
       <string>mark</string>
       <key>c</key>
       <string>base</string>
+      <key>cacute</key>
+      <string>base</string>
+      <key>caron</key>
+      <string>base</string>
       <key>caroncomb</key>
       <string>mark</string>
       <key>caroncomb.alt</key>
       <string>mark</string>
+      <key>ccaron</key>
+      <string>base</string>
+      <key>ccedilla</key>
+      <string>base</string>
+      <key>cdotaccent</key>
+      <string>base</string>
+      <key>cedilla</key>
+      <string>base</string>
       <key>cedillacomb</key>
       <string>mark</string>
+      <key>circumflex</key>
+      <string>base</string>
       <key>circumflexcomb</key>
       <string>mark</string>
       <key>commaaccentcomb</key>
@@ -414,25 +650,75 @@
       <string>mark</string>
       <key>d</key>
       <string>base</string>
+      <key>dcaron</key>
+      <string>base</string>
+      <key>dieresis</key>
+      <string>base</string>
       <key>dieresiscomb</key>
       <string>mark</string>
+      <key>dotaccent</key>
+      <string>base</string>
       <key>dotaccentcomb</key>
       <string>mark</string>
       <key>dotlessi</key>
       <string>base</string>
       <key>e</key>
       <string>base</string>
+      <key>eacute</key>
+      <string>base</string>
+      <key>ebreve</key>
+      <string>base</string>
+      <key>ecaron</key>
+      <string>base</string>
+      <key>ecircumflex</key>
+      <string>base</string>
+      <key>edieresis</key>
+      <string>base</string>
+      <key>edotaccent</key>
+      <string>base</string>
+      <key>egrave</key>
+      <string>base</string>
+      <key>emacron</key>
+      <string>base</string>
+      <key>eogonek</key>
+      <string>base</string>
       <key>f</key>
       <string>base</string>
       <key>g</key>
+      <string>base</string>
+      <key>gbreve</key>
+      <string>base</string>
+      <key>gcaron</key>
+      <string>base</string>
+      <key>gdotaccent</key>
       <string>base</string>
       <key>gravecomb</key>
       <string>mark</string>
       <key>h</key>
       <string>base</string>
+      <key>hungarumlaut</key>
+      <string>base</string>
       <key>hungarumlautcomb</key>
       <string>mark</string>
       <key>i</key>
+      <string>base</string>
+      <key>iacute</key>
+      <string>base</string>
+      <key>ibreve</key>
+      <string>base</string>
+      <key>icircumflex</key>
+      <string>base</string>
+      <key>idieresis</key>
+      <string>base</string>
+      <key>igrave</key>
+      <string>base</string>
+      <key>imacron</key>
+      <string>base</string>
+      <key>iogonek</key>
+      <string>base</string>
+      <key>iogonek.dotless</key>
+      <string>base</string>
+      <key>itilde</key>
       <string>base</string>
       <key>j</key>
       <string>base</string>
@@ -440,45 +726,189 @@
       <string>base</string>
       <key>l</key>
       <string>base</string>
+      <key>lacute</key>
+      <string>base</string>
+      <key>lcaron</key>
+      <string>base</string>
       <key>m</key>
+      <string>base</string>
+      <key>macron</key>
       <string>base</string>
       <key>macroncomb</key>
       <string>mark</string>
       <key>n</key>
       <string>base</string>
+      <key>nacute</key>
+      <string>base</string>
+      <key>ncaron</key>
+      <string>base</string>
+      <key>ntilde</key>
+      <string>base</string>
       <key>o</key>
+      <string>base</string>
+      <key>oacute</key>
+      <string>base</string>
+      <key>obreve</key>
+      <string>base</string>
+      <key>ocircumflex</key>
+      <string>base</string>
+      <key>odieresis</key>
+      <string>base</string>
+      <key>ogonek</key>
       <string>base</string>
       <key>ogonekcomb</key>
       <string>mark</string>
+      <key>ograve</key>
+      <string>base</string>
+      <key>ohungarumlaut</key>
+      <string>base</string>
+      <key>omacron</key>
+      <string>base</string>
+      <key>oslashacute</key>
+      <string>base</string>
+      <key>otilde</key>
+      <string>base</string>
       <key>p</key>
       <string>base</string>
       <key>q</key>
       <string>base</string>
       <key>r</key>
       <string>base</string>
+      <key>racute</key>
+      <string>base</string>
+      <key>rcaron</key>
+      <string>base</string>
+      <key>ring</key>
+      <string>base</string>
       <key>ringcomb</key>
       <string>mark</string>
       <key>s</key>
       <string>base</string>
+      <key>sacute</key>
+      <string>base</string>
+      <key>scaron</key>
+      <string>base</string>
+      <key>scedilla</key>
+      <string>base</string>
+      <key>scircumflex</key>
+      <string>base</string>
       <key>t</key>
+      <string>base</string>
+      <key>tcaron</key>
+      <string>base</string>
+      <key>tilde</key>
       <string>base</string>
       <key>tildecomb</key>
       <string>mark</string>
       <key>u</key>
       <string>base</string>
+      <key>uacute</key>
+      <string>base</string>
+      <key>ubreve</key>
+      <string>base</string>
+      <key>ucircumflex</key>
+      <string>base</string>
+      <key>udieresis</key>
+      <string>base</string>
+      <key>ugrave</key>
+      <string>base</string>
+      <key>uhungarumlaut</key>
+      <string>base</string>
+      <key>umacron</key>
+      <string>base</string>
+      <key>uni0122</key>
+      <string>base</string>
+      <key>uni0123</key>
+      <string>base</string>
+      <key>uni0136</key>
+      <string>base</string>
+      <key>uni0137</key>
+      <string>base</string>
+      <key>uni013B</key>
+      <string>base</string>
+      <key>uni013C</key>
+      <string>base</string>
+      <key>uni0145</key>
+      <string>base</string>
+      <key>uni0146</key>
+      <string>base</string>
+      <key>uni0156</key>
+      <string>base</string>
+      <key>uni0157</key>
+      <string>base</string>
+      <key>uni0162</key>
+      <string>base</string>
+      <key>uni0163</key>
+      <string>base</string>
+      <key>uni01CD</key>
+      <string>base</string>
+      <key>uni01CE</key>
+      <string>base</string>
+      <key>uni01D3</key>
+      <string>base</string>
+      <key>uni01D4</key>
+      <string>base</string>
+      <key>uni01E8</key>
+      <string>base</string>
+      <key>uni01E9</key>
+      <string>base</string>
+      <key>uni0218</key>
+      <string>base</string>
+      <key>uni0219</key>
+      <string>base</string>
+      <key>uni021A</key>
+      <string>base</string>
+      <key>uni021B</key>
+      <string>base</string>
+      <key>uni021E</key>
+      <string>base</string>
+      <key>uni021F</key>
+      <string>base</string>
       <key>uni0237</key>
       <string>base</string>
+      <key>uni1EBC</key>
+      <string>base</string>
+      <key>uni1EBD</key>
+      <string>base</string>
       <key>uni25CC</key>
+      <string>base</string>
+      <key>uogonek</key>
+      <string>base</string>
+      <key>uring</key>
+      <string>base</string>
+      <key>utilde</key>
       <string>base</string>
       <key>v</key>
       <string>base</string>
       <key>w</key>
       <string>base</string>
+      <key>wacute</key>
+      <string>base</string>
+      <key>wcircumflex</key>
+      <string>base</string>
+      <key>wdieresis</key>
+      <string>base</string>
+      <key>wgrave</key>
+      <string>base</string>
       <key>x</key>
       <string>base</string>
       <key>y</key>
       <string>base</string>
+      <key>yacute</key>
+      <string>base</string>
+      <key>ycircumflex</key>
+      <string>base</string>
+      <key>ydieresis</key>
+      <string>base</string>
+      <key>ygrave</key>
+      <string>base</string>
       <key>z</key>
+      <string>base</string>
+      <key>zacute</key>
+      <string>base</string>
+      <key>zcaron</key>
+      <string>base</string>
+      <key>zdotaccent</key>
       <string>base</string>
     </dict>
   </dict>

@@ -322,6 +322,13 @@ NEW = {
     "hbar": LC["h"] + P((60, 610), (260, 610)),
     "Lslash": G["L"] + P((50, 250), (260, 420)),
     "lslash": LC["l"] + P((200, 330), (400, 480)),
+    "longs": chain([(260, B), (260, 560)], arc(370, 560, 110, AT - 560, 180, 40)),      # f without its bar
+    "Ldot": G["L"] + P((340, 330), (340, 350)),                                          # Catalan
+    "ldot": LC["l"] + P((450, 260), (450, 280)),
+    # Dutch IJ / ij: one cell, a plain I stem beside a J (j) with its hook turned left
+    "IJ": P((150, T), (150, B)) + chain([(440, T), (440, 220)], arc(340, 220, 100, 220 - B, 0, -140)),
+    "ij": P((170, XT), (170, B)) + _bigdot(170)
+          + chain([(420, XT), (420, -60)], arc(300, -60, 120, -60 - DT, 0, -150)) + _bigdot(420),
     # symbols and punctuation
     # one continuous stroke: arm, lower bowl, up through the crossing, round the upper loop, leg
     "ampersand": chain([(490, 330)], arc(285, 215, 175, 173, 360, 150), [(280, 432)],
@@ -375,7 +382,8 @@ NEW = {
 NEW_ZONE = {"AE": (0, CAP), "OE": (0, CAP), "Oslash": (0, CAP), "Eth": (0, CAP), "Thorn": (0, CAP),
             "uni1E9E": (0, CAP), "Hbar": (0, CAP), "Lslash": (0, CAP),
             "ae": (0, XH), "oe": (0, XH), "oslash": (0, XH), "dcroat": (0, ASC), "eth": (0, ASC),
-            "thorn": (DESC, ASC), "germandbls": (0, ASC), "hbar": (0, ASC), "lslash": (0, ASC)}
+            "thorn": (DESC, ASC), "germandbls": (0, ASC), "hbar": (0, ASC), "lslash": (0, ASC),
+            "longs": (0, ASC), "Ldot": (0, CAP), "ldot": (0, ASC), "IJ": (0, CAP), "ij": (DESC, ASC)}
 # marks are drawn lighter than the 84-unit stems, as is usual; dots keep the full weight
 _MARK_STROKE = {"gravecomb": 72, "acutecomb": 72, "circumflexcomb": 72, "caroncomb": 72, "macroncomb": 72,
                 "brevecomb": 66, "hungarumlautcomb": 72, "commaaccentcomb": 72, "commaturnedabovecomb": 72,
@@ -442,11 +450,11 @@ _MARK_FOR = {0x300: "gravecomb", 0x301: "acutecomb", 0x302: "circumflexcomb", 0x
              0x327: "cedillacomb", 0x328: "ogonekcomb"}
 _BELOW = {"cedillacomb", "commaaccentcomb", "ogonekcomb"}
 _OGONEK_X = {"A": 445, "E": 430, "I": 300, "U": 330, "a": 430, "e": 360, "i": 380, "u": 430}
-_COMMA_X = {"t": 260}
+_COMMA_X = {"t": 260, "r": 190}
 # Czech/Slovak d l t L take the apostrophe-like caron beside the stem: (dx, dy) of caroncomb.alt
 _CARON_ALT = {"d": (255, 40), "l": (120, 40), "t": (80, 0), "L": (-40, 0)}
-# Latvian: K L N k l n G take a comma below instead of the cedilla, g a turned comma above
-_LATVIAN = set("GKLNkln")
+# Latvian: K L N R k l n r G take a comma below instead of the cedilla, g a turned comma above
+_LATVIAN = set("GKLNRklnr")
 _SPACING = {0xA8: "dieresiscomb", 0xAF: "macroncomb", 0xB4: "acutecomb", 0xB8: "cedillacomb",
             0x2DC: "tildecomb", 0x2DA: "ringcomb", 0x2D8: "brevecomb", 0x2DB: "ogonekcomb",
             0x2D9: "dotaccentcomb", 0x2DD: "hungarumlautcomb", 0x2C6: "circumflexcomb", 0x2C7: "caroncomb"}
@@ -471,6 +479,10 @@ def _composites(codepoints):
         if len(parts) != 2 or parts[1] not in _MARK_FOR:
             continue
         base, mark = chr(parts[0]), _MARK_FOR[parts[1]]
+        if not base.isascii():                    # e.g. O with stroke + acute: base is a drawn glyph
+            out[_glyph_name(cp)] = (cp, [(_glyph_name(parts[0]), 0, 0),
+                                         (mark, ADV, UC_SHIFT_FOR.get(mark, UC_SHIFT) if base.isupper() else 0)])
+            continue
         upper = base.isupper()
         if mark == "cedillacomb" and base in _LATVIAN:
             mark = "commaaccentcomb"
@@ -496,6 +508,8 @@ _LATIN_CORE_ACCENTED = "".join(chr(c) for c in _SPACING) + (
     "ÀÁÂÃÄÅÈÉÊËÌÍÎÏÑÒÓÔÕÙÚÛÝàáâãäåèéêëìíîïñòóôõùúûýÿ"
     "ĀāĂăĄąĆćĊċČčĎďĒēĖėĘęĚěĠġĢģĪīĮįĶķĹĺĻļĽľŃńŅņŇňŌōŐőŔŕŘřŚśŠšŢţŤťŪūŮůŰűŲųŴŵŶŷŸŹźŻżŽž"
     "ȘșȚțẀẁẂẃẄẅỲỳ"
+    # auxiliary letters of European orthographies (Fontspector shaping check)
+    "ĔĕĬĭŎŏŬŭǓǔĨĩŨũẼẽŜŝǍǎǦǧǨǩǾǿȞȟŖŗ"
 )
 COMP = _composites(_TURKISH + [ord(c) for c in _LATIN_CORE_ACCENTED])
 COMP[_glyph_name(0x110)] = (0x110, [("Eth", 0, 0)])       # D with stroke: same drawing as Eth
