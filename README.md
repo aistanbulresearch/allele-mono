@@ -34,6 +34,11 @@ Licensed under the [SIL Open Font License 1.1](OFL.txt).
   `ggmsa(..., font = "AlleleMono")`. Added in
   [YuLab-SMU/ggmsa#77](https://github.com/YuLab-SMU/ggmsa/pull/77); the glyph polygons are
   exported with `sources/export_ggmsa_glyphs.py`.
+- [UGENE](https://github.com/ugeneunipro/ugene) Alignment Editor, as an installed system font:
+  install `AlleleMono-Regular.ttf`, restart UGENE, open an alignment, then
+  Actions > Appearance > Fonts > Allele Mono
+  ([ugeneunipro/ugene#1968](https://github.com/ugeneunipro/ugene/issues/1968)).
+  UGENE's Sequence View uses a fixed font.
 
 ## Design decisions
 
