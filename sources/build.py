@@ -22,7 +22,7 @@ FAMILY = "Allele Mono"
 DESIGNER = "Ozge A. Cavus - AIstanbul Research Group"
 REPO_URL = "https://github.com/aistanbulresearch/allele-mono"
 PSNAME = "AlleleMono-Regular"
-VERSION = "1.001"
+VERSION = "1.002"
 COPYRIGHT = f"Copyright 2026 The Allele Mono Project Authors ({REPO_URL})"
 
 UPM = 1000
@@ -199,11 +199,12 @@ LC = {
     "g": [arc(285, XM, 145, XRY, 0, 360)] + chain([(R, XT), (R, -60)], arc(M, -60, RX, -60 - DT, 0, -160)),
     "h": P((L, AT), (L, B)) + _n_arch,
     # i: serif left at the top, full base bar: keeps i, l, 1, I apart
-    "i": P((L + 40, XT), (M, XT), (M, B)) + P((L + 20, B), (R - 20, B)) + _bigdot(M),
+    # dot moved 35 units left of the stem centre: the top-left serif pulls the eye left, so a centred dot looked shifted right
+    "i": P((L + 40, XT), (M, XT), (M, B)) + P((L + 20, B), (R - 20, B)) + _bigdot(M - 35),
     "dotlessi": P((L + 40, XT), (M, XT), (M, B)) + P((L + 20, B), (R - 20, B)),
     "uni0237": chain([(L + 40, XT), (360, XT), (360, -60)], arc(230, -60, 130, -60 - DT, 0, -150)),
     "j": chain([(L + 40, XT), (360, XT), (360, -60)], arc(230, -60, 130, -60 - DT, 0, -150))
-         + _bigdot(360),
+         + _bigdot(360 - 35),                      # same optical shift as i
     "k": P((L, AT), (L, B)) + P((R - 10, XT), (L + 10, 200)) + P((244, 290), (R, B)),
     # l: tail to the right, unlike 1 (flag + base bar) and I (two bars)
     "l": chain([(L + 40, AT), (M, AT), (M, 150)], arc(390, 150, 90, 150 - B, 180, 270), [(390, B), (R + 10, B)]),
