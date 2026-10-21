@@ -28,6 +28,13 @@ Licensed under the [SIL Open Font License 1.1](OFL.txt).
 - Outlines are true cubic curves with points on extrema, built from a UFO source with fontmake.
 - Autohinted with ttfautohint.
 
+## Used in
+
+- [ggmsa](https://github.com/YuLab-SMU/ggmsa) (R/Bioconductor, multiple sequence alignment plots):
+  `ggmsa(..., font = "AlleleMono")`. Added in
+  [YuLab-SMU/ggmsa#77](https://github.com/YuLab-SMU/ggmsa/pull/77); the glyph polygons are
+  exported with `sources/export_ggmsa_glyphs.py`.
+
 ## Design decisions
 
 Every decision below was measured against eleven popular monospace fonts from Google Fonts
