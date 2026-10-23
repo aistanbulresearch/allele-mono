@@ -7,19 +7,19 @@
   <anchor x="445" y="0" name="ogonek"/>
   <outline>
     <contour>
-      <point x="75" y="0" type="line"/>
+      <point x="269" y="700" type="line"/>
+      <point x="76" y="0" type="line"/>
       <point x="162" y="0" type="line"/>
-      <point x="214" y="188" type="line"/>
-      <point x="386" y="188" type="line"/>
+      <point x="211" y="193" type="line"/>
+      <point x="389" y="193" type="line"/>
       <point x="438" y="0" type="line"/>
-      <point x="525" y="0" type="line"/>
-      <point x="332" y="700" type="line"/>
-      <point x="268" y="700" type="line"/>
+      <point x="524" y="0" type="line"/>
+      <point x="331" y="700" type="line"/>
     </contour>
     <contour>
-      <point x="363" y="272" type="line"/>
-      <point x="237" y="272" type="line"/>
-      <point x="300" y="500" type="line"/>
+      <point x="370" y="267" type="line"/>
+      <point x="230" y="267" type="line"/>
+      <point x="300" y="542" type="line"/>
     </contour>
   </outline>
 </glyph>

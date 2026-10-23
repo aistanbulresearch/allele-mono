@@ -6,18 +6,18 @@
   <anchor x="300" y="0" name="bottom"/>
   <outline>
     <contour>
-      <point x="151" y="520" type="line"/>
-      <point x="44" y="520" type="line"/>
-      <point x="247" y="260" type="line"/>
-      <point x="44" y="0" type="line"/>
-      <point x="151" y="0" type="line"/>
-      <point x="300" y="192" type="line"/>
-      <point x="449" y="0" type="line"/>
-      <point x="556" y="0" type="line"/>
-      <point x="353" y="260" type="line"/>
-      <point x="556" y="520" type="line"/>
-      <point x="449" y="520" type="line"/>
-      <point x="300" y="328" type="line"/>
+      <point x="454" y="520" type="line"/>
+      <point x="300" y="322" type="line"/>
+      <point x="146" y="520" type="line"/>
+      <point x="49" y="520" type="line"/>
+      <point x="252" y="260" type="line"/>
+      <point x="49" y="0" type="line"/>
+      <point x="146" y="0" type="line"/>
+      <point x="300" y="198" type="line"/>
+      <point x="454" y="0" type="line"/>
+      <point x="551" y="0" type="line"/>
+      <point x="348" y="260" type="line"/>
+      <point x="551" y="520" type="line"/>
     </contour>
   </outline>
 </glyph>
