@@ -17,7 +17,7 @@ Licensed under the [SIL Open Font License 1.1](OFL.txt).
 
 ## Status
 
-**Version 1.002.**
+**Version 1.100.** See [CHANGELOG.md](CHANGELOG.md) for what changed.
 
 - Character set: the full Google Fonts minimum set, GF Latin Core (319 characters), plus the
   auxiliary letters of several European orthographies (for example Dutch IJ, Catalan L with
@@ -26,6 +26,8 @@ Licensed under the [SIL Open Font License 1.1](OFL.txt).
   any letter), a second accent stacks above the first, and i and j lose their dot under an
   accent. See [documentation/specimen_all.png](documentation/specimen_all.png).
 - Outlines are true cubic curves with points on extrema, built from a UFO source with fontmake.
+  Optical corrections (stroke contrast, overshoot, thinned joins, tapered vertices) and optical
+  centring in the cell are part of the build; see [How the font is made](#how-the-font-is-made).
 - Autohinted with ttfautohint.
 
 ## Used in
@@ -70,8 +72,10 @@ in VS Code.
 
 `sources/test_pairs.py` renders each letter, blurs it to simulate small on-screen sizes, and
 reports the cosine similarity between letter pairs (lower means easier to tell apart),
-comparing against other fonts in a folder. Results for this version are in
-[documentation/legibility_results.txt](documentation/legibility_results.txt).
+comparing against other fonts in a folder. Results for this version, with the list of reference
+fonts, are in [documentation/legibility_results.txt](documentation/legibility_results.txt).
+Measurements of the optical corrections against other monospaces are in
+[documentation/optics_metrics.md](documentation/optics_metrics.md).
 
 This is a rough proxy, not a reading study. It missed at least one real problem
 (an earlier G that read as 6 at 12 px), so every change was also checked by eye.
@@ -120,6 +124,7 @@ make ufo     # regenerate sources/AlleleMono-Regular.ufo after editing sources/b
 make build   # compile the UFO with gftools builder into fonts/ttf and fonts/webfonts
 make test    # check the fonts with fontspector (needs: cargo binstall fontspector)
 python3 sources/specimen.py   # redraw documentation/specimen_all.png
+python3 sources/article_images.py   # redraw the images in documentation/article/
 ```
 
 `make` creates a Python virtual environment from `requirements.txt` on first use.
