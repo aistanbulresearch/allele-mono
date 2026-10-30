@@ -4,20 +4,20 @@
   <unicode hex="007D"/>
   <outline>
     <contour>
-      <point x="478" y="330" type="line"/>
-      <point x="332" y="423" type="line"/>
-      <point x="332" y="802" type="line"/>
-      <point x="148" y="802" type="line"/>
-      <point x="148" y="718" type="line"/>
-      <point x="248" y="718" type="line"/>
-      <point x="248" y="377" type="line"/>
-      <point x="322" y="330" type="line"/>
-      <point x="248" y="283" type="line"/>
-      <point x="248" y="-58" type="line"/>
-      <point x="148" y="-58" type="line"/>
-      <point x="148" y="-142" type="line"/>
-      <point x="332" y="-142" type="line"/>
-      <point x="332" y="237" type="line"/>
+      <point x="148" y="797" type="line"/>
+      <point x="148" y="723" type="line"/>
+      <point x="248" y="723" type="line"/>
+      <point x="248" y="381" type="line"/>
+      <point x="345" y="330" type="line"/>
+      <point x="248" y="279" type="line"/>
+      <point x="248" y="-63" type="line"/>
+      <point x="148" y="-63" type="line"/>
+      <point x="148" y="-137" type="line"/>
+      <point x="332" y="-137" type="line"/>
+      <point x="332" y="243" type="line"/>
+      <point x="469" y="330" type="line"/>
+      <point x="332" y="417" type="line"/>
+      <point x="332" y="797" type="line"/>
     </contour>
   </outline>
 </glyph>

@@ -4,6 +4,6 @@
   <unicode hex="0154"/>
   <outline>
     <component base="R"/>
-    <component base="acutecomb" xOffset="600" yOffset="180"/>
+    <component base="acutecomb" xOffset="612" yOffset="180"/>
   </outline>
 </glyph>

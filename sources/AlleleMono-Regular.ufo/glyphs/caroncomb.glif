@@ -2,15 +2,15 @@
 <glyph name="caroncomb" format="2">
   <unicode hex="030C"/>
   <anchor x="-300" y="520" name="_top"/>
-  <anchor x="-300" y="754" name="top"/>
+  <anchor x="-300" y="744" name="top"/>
   <outline>
     <contour>
-      <point x="-409" y="741" type="line"/>
-      <point x="-456" y="686" type="line"/>
-      <point x="-300" y="553" type="line"/>
-      <point x="-144" y="686" type="line"/>
-      <point x="-191" y="741" type="line"/>
-      <point x="-300" y="647" type="line"/>
+      <point x="-409" y="735" type="line"/>
+      <point x="-450" y="687" type="line"/>
+      <point x="-300" y="558" type="line"/>
+      <point x="-150" y="687" type="line"/>
+      <point x="-191" y="735" type="line"/>
+      <point x="-300" y="642" type="line"/>
     </contour>
   </outline>
 </glyph>

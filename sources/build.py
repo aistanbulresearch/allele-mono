@@ -22,7 +22,7 @@ FAMILY = "Allele Mono"
 DESIGNER = "Ozge A. Cavus - AIstanbul Research Group"
 REPO_URL = "https://github.com/aistanbulresearch/allele-mono"
 PSNAME = "AlleleMono-Regular"
-VERSION = "1.002"
+VERSION = "1.100"
 COPYRIGHT = f"Copyright 2026 The Allele Mono Project Authors ({REPO_URL})"
 
 UPM = 1000
@@ -40,6 +40,23 @@ AT = ASC - HS                # ascender skeleton line
 DT = DESC + HS               # descender skeleton line
 XM = (B + XT) / 2            # lowercase vertical centre
 XRY = (XT - B) / 2           # lowercase round half-height
+
+# ---------------------------------------------------------------- optical corrections (applied by ufo_build.py)
+# The skeletons are drawn for one constant pen; these make the expanded strokes look even.
+# The polygon prototype (build() below) ignores them, so the search scripts still see a monoline.
+H_RATIO = 0.88               # horizontal strokes / vertical stems (JetBrains 0.91, Plex 0.87, Fira 0.82)
+DIAG_THIN = 0.05             # 45-degree strokes lose this much more weight
+OVERSHOOT = 11               # round strokes pass the guide lines by this much (references 8 to 12)
+GUIDES = (0, XH, CAP, ASC, DESC)
+TENSION_OUT = 0.58           # Bezier handle / radius of outer curves (a true ellipse is 0.552)
+TENSION_IN = 0.62            # counters squarer still, so they do not look pinched
+JOIN_THIN = 0.38             # a curve leaving a stem drops to 62% weight at the join (n, b, d, a, r)
+JOIN_REACH = 110             # ... fading out over this distance from the stem's centre line
+TAPER = 0.30                 # diagonals taper to lose this share of their inner half-width at a sharp vertex
+TAPER_ANGLE = 80             # vertices sharper than this (degrees) taper: v w A V W M N Z 4 7
+TAPER_BUTT = 0.16            # diagonals ending on another stroke (k K R y) thin on both sides
+SQUARE_TERMINALS = {"at"}    # curve ends cut square to the stroke, not across: the tail of @ runs into its hook
+WEIGHT = {"m": 0.90, "M": 0.94, "W": 0.93, "w": 0.93, "AE": 0.94, "OE": 0.94, "at": 0.94, "numbersign": 0.94}    # crowded glyphs are lightened to keep an even colour
 
 
 class ArcSeg:
@@ -98,6 +115,24 @@ def arc(cx, cy, rx, ry, a0, a1):
     return ArcList([ArcSeg(cx, cy, rx, ry, a0, a1)])
 
 
+class DotSeg:
+    """A square dot of side `size` centred on (x, y): tittles, periods, the dots of accents."""
+    __slots__ = ("x", "y", "size")
+
+    def __init__(self, x, y, size):
+        self.x, self.y, self.size = x, y, size
+
+
+def dot(x, y, size):
+    return [[DotSeg(x, y, size)]]
+
+
+DOT_I = 124                  # tittle of i and j: large, so i and dotless i stay apart at small sizes
+DOT_ACCENT = 112             # dot accent
+DOT_DIERESIS = 104
+DOT_PUNCT = 104              # period, colon: a little over the stem weight, so they look as heavy
+
+
 def P(*pts):
     return [list(pts)]
 
@@ -113,13 +148,16 @@ def chain(*parts):
 
 
 def mirror(strokes):
-    return [[it.mirrored() if isinstance(it, ArcSeg) else (2 * M - it[0], it[1]) for it in s] for s in strokes]
+    return [[it.mirrored() if isinstance(it, ArcSeg) else DotSeg(2 * M - it.x, it.y, it.size)
+             if isinstance(it, DotSeg) else (2 * M - it[0], it[1]) for it in s] for s in strokes]
 
 
 def sample(stroke):
     """Stroke (points and ArcSegs) -> polyline, exactly as the prototype sampled it."""
     out = []
     for it in stroke:
+        if isinstance(it, DotSeg):
+            return [(it.x, it.y)]
         if isinstance(it, ArcSeg):
             pts = it.sample()
             if it.skip_first or (out and out[-1] == pts[0]):
@@ -133,6 +171,7 @@ def sample(stroke):
 RX, RY = R - M, (T - B) / 2
 
 # ---------------------------------------------------------------- uppercase
+H_IN, N_OUT = 20, 28         # H stems pulled in, N pushed out: N-H stays apart (blurred-pair search), widths near O
 G = {
     "A": P((L, B), (M, T), (R, B)) + P((L + 58, 230), (R - 58, 230)),
     "B": P((L, B), (L, T)) + chain([(L, T), (320, T)], arc(320, 518, 140, 140, 90, -90), [(320, 378), (L, 378)])
@@ -147,15 +186,16 @@ G = {
     "E": P((R, T), (L, T), (L, B), (R, B)) + P((L, MID), (R - 40, MID)),
     # F: short arms and a lower middle arm (measured: separates it from P, E and T)
     "F": P((420, T), (L, T), (L, B)) + P((L, 300), (340, 300)),
-    # H: standard crossbar, stems pulled in by 45 (measured: separates it from N; a low bar read like h)
-    "H": P((L + 45, B), (L + 45, T)) + P((R - 45, B), (R - 45, T)) + P((L + 45, MID), (R - 45, MID)),
+    # H: standard crossbar, stems pulled in by H_IN (pulled in by 45 it separated best from N, but it was
+    # 90 units narrower than O and broke the rhythm of capital sequences; a low bar read like h)
+    "H": P((L + H_IN, B), (L + H_IN, T)) + P((R - H_IN, B), (R - H_IN, T)) + P((L + H_IN, MID), (R - H_IN, MID)),
     "I": P((L + 40, T), (R - 40, T)) + P((M, T), (M, B)) + P((L + 40, B), (R - 40, B)),
     "J": chain([(L + 60, T), (R, T), (R, 220)], arc(M, 220, RX, 220 - B, 0, -180)),
     "K": P((L, B), (L, T)) + P((R, T), (L + 10, 300)) + P((250, 420), (R, B)),
     "L": P((L, T), (L, B), (R, B)),
     # M: shallow vertex (470); a deep vertex was measured to collide with W
     "M": P((L, B), (L, T), (M, 470), (R, T), (R, B)),
-    "N": P((L - 30, B), (L - 30, T), (R + 30, B), (R + 30, T)),  # wider than H: larger open triangles
+    "N": P((L - N_OUT, B), (L - N_OUT, T), (R + N_OUT, B), (R + N_OUT, T)),  # wider than H: larger open triangles
     "O": [arc(M, MID, RX, RY, 0, 360)],
     "P": P((L, B), (L, T)) + chain([(L, T), (310, T)], arc(310, 500, 160, 158, 90, -90), [(310, 342), (L, 342)]),
     # Q: tail drops from the bottom centre and turns right (measured best against O, G and D)
@@ -163,7 +203,7 @@ G = {
     "R": P((L, B), (L, T)) + chain([(L, T), (310, T)], arc(310, 500, 160, 158, 90, -90), [(310, 342), (L, 342)])
          + P((290, 342), (R, B)),
     # S: lower terminal kept short (-140) so the silhouette separates from G
-    "S": [arc(M, 505, 165, 153, 20, 270) + arc(M, 197, 170, 155, 90, -140)[1:]],
+    "S": [arc(M, 512, 157, 146, 20, 270) + arc(M, 204, 172, 162, 90, -140)[1:]],   # top bowl smaller
     "T": P((L, T), (R, T)) + P((M, T), (M, B)),
     "U": chain([(L, T), (L, 230)], arc(M, 230, RX, 230 - B, 180, 360), [(R, 230), (R, T)]),
     "V": P((L, T), (M, B), (R, T)),
@@ -176,27 +216,29 @@ G = {
 
 # ---------------------------------------------------------------- lowercase
 def _bigdot(x):
-    """i/j dot: about 144 x 124 units, set high, so i and dotless i stay apart at small sizes."""
-    return P((x - 30, DOT[0]), (x + 30, DOT[0])) + P((x - 30, DOT[1]), (x + 30, DOT[1]))
+    """i/j dot: a large square, set high, so i and dotless i stay apart at small sizes."""
+    return dot(x, DOT_Y, DOT_I)
 
 
+_E_A0 = math.degrees(math.asin((290 - HS * H_RATIO - XM) / XRY))   # e bowl: starts at the bar's underside
 _n_arch = chain([(L, 300)], arc(M, 300, RX, XT - 300, 180, 0), [(R, 300), (R, B)])
-DOT = (650, 690)             # skeleton y-range of the i/j dot (raised: search on i vs dotless i)
+DOT_Y = 670                  # centre of the i/j dot (raised: search on i vs dotless i)
 LC = {
     # a: smaller bowl (top at 240) and a hook starting at 140 deg (search: separates a from o and e)
     # The bowl is open: its top runs flat into the stem and its right side merges
     # tangentially into the stem (a closed bowl plus a bar left a heavy blob top right).
     "a": chain(arc(M, 360, RX, XT - 360, 140, 0), [(R, 360), (R, B)])
          + chain([(R, 240), (M + 10, 240)], arc(M + 10, 141, RX - 10, 141 - B, 90, 360)),
-    "b": P((L, AT), (L, B)) + [arc(320, XM, 150, XRY, 0, 360)],
+    "b": P((L, AT), (L, B)) + [arc(M, XM, RX, XRY, 0, 360)],
     "c": [arc(M, XM, RX, XRY, 45, 315)],
-    "d": P((R, AT), (R, B)) + [arc(280, XM, 150, XRY, 0, 360)],
+    "d": P((R, AT), (R, B)) + [arc(M, XM, RX, XRY, 0, 360)],
     # e: bar raised to 290 and a wider aperture (ends at 300 deg): separates e from o and a.
     # Bar and bowl are one stroke, so the bowl starts exactly where the bar meets it.
-    "e": chain([(L + 20, 290), (M + RX * math.cos(math.asin((290 - XM) / XRY)), 290)],
-               arc(M, XM, RX, XRY, math.degrees(math.asin((290 - XM) / XRY)), 300)),
+    # the bowl starts level with the underside of the bar and rises straight to it, so the
+    # bar meets the bowl in a square corner instead of a notch in the outer curve
+    "e": chain([(L + 20, 290), (M + RX * math.cos(math.radians(_E_A0)), 290)], arc(M, XM, RX, XRY, _E_A0, 300)),
     "f": chain([(260, B), (260, 560)], arc(370, 560, 110, AT - 560, 180, 40)) + P((L + 20, XT), (R - 30, XT)),
-    "g": [arc(285, XM, 145, XRY, 0, 360)] + chain([(R, XT), (R, -60)], arc(M, -60, RX, -60 - DT, 0, -160)),
+    "g": [arc(M, XM, RX, XRY, 0, 360)] + chain([(R, XT), (R, -60)], arc(M, -60, RX, -60 - DT, 0, -160)),
     "h": P((L, AT), (L, B)) + _n_arch,
     # i: serif left at the top, full base bar: keeps i, l, 1, I apart
     # dot moved 35 units left of the stem centre: the top-left serif pulls the eye left, so a centred dot looked shifted right
@@ -214,14 +256,14 @@ LC = {
     "o": [arc(M, XM, RX, XRY, 0, 360)],
     # p, q: descender serifs set them apart from b and d. q's serif runs both ways from the stem
     # (a right-only stub looked clipped; centred it measured best against d, a and y, and no worse against g).
-    "p": P((L, XT), (L, DT)) + [arc(320, XM, 150, XRY, 0, 360)] + P((L - 50, DT), (L + 110, DT)),
-    "q": P((R, XT), (R, DT)) + [arc(280, XM, 150, XRY, 0, 360)] + P((R - 80, DT), (R + 70, DT)),
+    "p": P((L, XT), (L, DT)) + [arc(M, XM, RX, XRY, 0, 360)] + P((L - 50, DT), (L + 110, DT)),
+    "q": P((R, XT), (R, DT)) + [arc(M, XM, RX, XRY, 0, 360)] + P((R - 80, DT), (R + 70, DT)),
     # r: top-left serif only; a base bar made it read like a broken c (seen by eye at 12 px)
     # long curved arm (radius 150, ends at 40 deg): chosen by Ozge; long enough that r never reads as
     # dotless i at small sizes. Costs a little on n vs r (0.847 -> 0.870) compared with a flat arm.
     "r": P((170, XT), (170, B)) + chain([(170, 300)], arc(320, 300, 150, XT - 300, 180, 40))
          + P((L - 10, XT), (170, XT)),
-    "s": [arc(M, XM + XRY / 2, 160, XRY / 2, 20, 270) + arc(M, XM - XRY / 2, 165, XRY / 2, 90, -140)[1:]],
+    "s": [arc(M, XT - 103, 155, 103, 20, 270) + arc(M, B + 115, 167, 115, 90, -140)[1:]],   # top bowl smaller
     "t": chain([(260, 640), (260, 150)], arc(370, 150, 110, 150 - B, 180, 270), [(370, B), (450, B)])
          + P((L, XT), (R - 20, XT)),
     "u": chain([(L, XT), (L, 220)], arc(M, 220, RX, 220 - B, 180, 360), [(R, 220)]) + P((R, XT), (R, B)),
@@ -239,7 +281,7 @@ DIG = {
     # one: flag, no base bar (measured: a base bar made it collide with i and I)
     "one": P((L + 20, 560), (M, T), (M, B)),        # flag and stem as one stroke: a clean mitred top
     "two": chain(arc(M, 495, 165, T - 495, 160, -20), [(L, B), (R, B)]),
-    "three": [arc(M, 505, 160, 153, 160, -90) + arc(M, 197, 170, 155, 90, -160)[1:]] + P((230, 352), (M, 352)),
+    "three": [arc(M, 512, 152, 146, 160, -90) + arc(M, 204, 172, 162, 90, -160)[1:]] + P((230, 366), (M, 366)),
     "four": P((390, B), (390, T), (L, 220), (R + 10, 220)),
     "five": chain([(R - 20, T), (L + 10, T), (L + 10, 390)], arc(M, 225, RX, 225 - B, 145, -150)),
     # six and nine: straight diagonal stems (measured: separates 6 from G and b, 9 from q and g)
@@ -250,12 +292,13 @@ DIG = {
 }
 
 # ---------------------------------------------------------------- punctuation and symbols
-_dot0 = P((M, B), (M, B + 20))
+_dot0 = dot(M, DOT_PUNCT / 2, DOT_PUNCT)
+_dot_x = dot(M, XH - DOT_PUNCT / 2, DOT_PUNCT)      # upper dot of colon and semicolon, on the x-height
 PUN = {
     "period": _dot0,
     "comma": P((M + 10, B + 20), (M - 30, -100)),
-    "colon": _dot0 + P((M, 400), (M, 420)),
-    "semicolon": P((M + 10, B + 20), (M - 30, -100)) + P((M, 400), (M, 420)),
+    "colon": _dot0 + _dot_x,
+    "semicolon": P((M + 10, B + 20), (M - 30, -100)) + _dot_x,
     "hyphen": P((L + 40, 300), (R - 40, 300)),
     "underscore": P((L - 40, -60), (R + 40, -60)),
     "parenleft": [arc(560, 330, 260, 450, 128, 232)],
@@ -286,14 +329,15 @@ def rot180(strokes, cy):
     """Rotate strokes half a turn about (M, cy): turns ? into an inverted question mark."""
     out = []
     for st in strokes:
-        out.append([b_.rotated(cy) if isinstance(b_, ArcSeg) else (2 * M - b_[0], 2 * cy - b_[1]) for b_ in st])
+        out.append([b_.rotated(cy) if isinstance(b_, ArcSeg) else
+                    DotSeg(2 * M - b_.x, 2 * cy - b_.y, b_.size) if isinstance(b_, DotSeg) else
+                    (2 * M - b_[0], 2 * cy - b_[1]) for b_ in st])
     return out
 
 
 # ---------------------------------------------------------------- remaining GF Latin Core letters and symbols
 _D = P((L, B), (L, T)) + chain([(L, T), (200, T)], arc(200, MID, 270, RY, 90, -90), [(200, B), (L, B)])
-_E_RIGHT = chain([(M, 290), (385 + 85 * math.cos(math.asin((290 - XM) / XRY)), 290)],
-                 arc(385, XM, 85, XRY, math.degrees(math.asin((290 - XM) / XRY)), 300))
+_E_RIGHT = chain([(M, 290), (385 + 85 * math.cos(math.radians(_E_A0)), 290)], arc(385, XM, 85, XRY, _E_A0, 300))
 _QUOTE = lambda x, y: P((x + 15, y + 130), (x - 15, y))          # noqa: E731  a comma-like tick
 _TURNED = lambda x, y: P((x - 15, y + 130), (x + 15, y))         # noqa: E731  the mirrored tick of opening quotes
 _amp_bowl = arc(285, 215, 175, 173, 150, 360)
@@ -310,10 +354,10 @@ NEW = {
     "Oslash": [arc(M, MID, RX, RY, 0, 360)] + P((140, -20), (460, 720)),
     "oslash": [arc(M, XM, RX, XRY, 0, 360)] + P((140, -20), (460, 540)),
     "Eth": _D + P((40, MID), (260, MID)),
-    "dcroat": P((R, AT), (R, B)) + [arc(280, XM, 150, XRY, 0, 360)] + P((370, 610), (550, 610)),
+    "dcroat": P((R, AT), (R, B)) + [arc(M, XM, RX, XRY, 0, 360)] + P((370, 610), (550, 610)),
     "eth": [arc(M, XM, RX, XRY, 0, 360)] + P((455, 330), (250, AT)) + P((230, 560), (430, 660)),
     "Thorn": P((L, B), (L, T)) + chain([(L, 540), (310, 540)], arc(310, 382, 160, 158, 90, -90), [(310, 224), (L, 224)]),
-    "thorn": P((L, AT), (L, DT)) + [arc(320, XM, 150, XRY, 0, 360)],
+    "thorn": P((L, AT), (L, DT)) + [arc(M, XM, RX, XRY, 0, 360)],
     # one continuous stroke: stem, narrow upper bowl down to the waist, wider lower bowl back to the stem
     "germandbls": chain([(L, B), (L, 550)], arc(275, 550, 145, AT - 550, 180, -90), [(320, 402)],
                         arc(320, 222, 150, 180, 90, -90), [(320, B), (240, B)]),
@@ -329,8 +373,8 @@ NEW = {
                                          [(250, 360), (L + 10, 360), (R, B)])
                + P((L, 530), (R, 530)),
     "longs": chain([(260, B), (260, 560)], arc(370, 560, 110, AT - 560, 180, 40)),      # f without its bar
-    "Ldot": G["L"] + P((340, 330), (340, 350)),                                          # Catalan
-    "ldot": LC["l"] + P((450, 260), (450, 280)),
+    "Ldot": G["L"] + dot(340, 340, DOT_PUNCT),                                          # Catalan
+    "ldot": LC["l"] + dot(450, 270, DOT_PUNCT),
     # Dutch IJ / ij: one cell, a plain I stem beside a J (j) with its hook turned left
     "IJ": P((150, T), (150, B)) + chain([(440, T), (440, 220)], arc(340, 220, 100, 220 - B, 0, -140)),
     "ij": P((170, XT), (170, B)) + _bigdot(170)
@@ -344,7 +388,7 @@ NEW = {
     "asciicircum": P((170, 420), (M, T), (430, 420)),
     "grave": P((340, 560), (260, T)),
     "asciitilde": chain(arc(230, 330, 70, 50, 180, 0), arc(370, 330, 70, 50, 180, 360)),
-    "exclamdown": P((M, XT - 20), (M, XT)) + P((M, 360), (M, -180)),
+    "exclamdown": _dot_x + P((M, 360), (M, -180)),
     "questiondown": rot180(PUN["question"], XM),
     "cent": [arc(M, XM, RX, XRY, 45, 315)] + P((M, -60), (M, 580)),
     "sterling": chain(arc(330, 520, 140, 138, 15, 180), [(190, 520), (190, 150), (L, B), (R, B)]) + P((L, 350), (380, 350)),
@@ -366,9 +410,9 @@ NEW = {
     "degree": [arc(M, 560, 90, 98, 0, 360)],
     "paragraph": P((310, T), (310, -120)) + P((450, T), (450, -120))      # stems far enough apart to read
                  + chain([(450, T), (268, T)], arc(268, 500, 110, 158, 90, 270), [(268, 342), (310, 342)]),
-    "periodcentered": P((M, 330), (M, 350)),
+    "periodcentered": dot(M, 340, DOT_PUNCT),
     "multiply": P((180, 200), (420, 460)) + P((420, 200), (180, 460)),
-    "divide": P((L, 330), (R, 330)) + P((M, 480), (M, 500)) + P((M, 160), (M, 180)),
+    "divide": P((L, 330), (R, 330)) + dot(M, 490, DOT_PUNCT) + dot(M, 170, DOT_PUNCT),
     "minus": P((L, 330), (R, 330)),
     "endash": P((100, 300), (500, 300)),
     "emdash": P((42, 300), (558, 300)),
@@ -378,8 +422,8 @@ NEW = {
     "quotedblleft": _TURNED(220, 570) + _TURNED(380, 570),
     "quotedblright": _QUOTE(220, 570) + _QUOTE(380, 570),
     "quotedblbase": _QUOTE(220, -70) + _QUOTE(380, -70),
-    "bullet": P((M - 30, 300), (M + 30, 300)) + P((M - 30, 360), (M + 30, 360)),
-    "ellipsis": P((120, B), (120, B + 20)) + P((M, B), (M, B + 20)) + P((480, B), (480, B + 20)),
+    "bullet": dot(M, 330, 150),
+    "ellipsis": dot(120, DOT_PUNCT / 2, DOT_PUNCT) + _dot0 + dot(480, DOT_PUNCT / 2, DOT_PUNCT),
     "Euro": [arc(330, MID, RX, RY, 48, 312)] + P((90, 410), (380, 410)) + P((90, 290), (350, 290)),
     "uni25CC": [P((M + 180 * math.cos(math.radians(a)) - 6, 330 + 220 * math.sin(math.radians(a))),
                   (M + 180 * math.cos(math.radians(a)) + 6, 330 + 220 * math.sin(math.radians(a))))[0]
@@ -402,8 +446,8 @@ ACC = {
     # Marks are drawn centred on x = 300 above the x-height (or below the baseline), then
     # stored shifted one advance to the left with zero width, so they combine onto the
     # preceding letter; composites place them back with dx = +ADV.
-    "dotaccentcomb": _bigdot(M),
-    "dieresiscomb": P((200, DOT[0]), (200, DOT[1])) + P((400, DOT[0]), (400, DOT[1])),
+    "dotaccentcomb": dot(M, DOT_Y, DOT_ACCENT),
+    "dieresiscomb": dot(200, DOT_Y, DOT_DIERESIS) + dot(400, DOT_Y, DOT_DIERESIS),
     # breve: wide and shallow, set high enough that a clear gap stays above the g's bowl at text sizes
     "brevecomb": [arc(M, 688, 120, 56, 180, 360)],
     "cedillacomb": chain([(M, 10), (M, -40)], arc(M, -102, 72, 62, 90, -150)),   # open hook, lighter stroke
@@ -579,7 +623,9 @@ def zone(name):
 
 
 def outline(strokes, clip=(0, CAP)):
-    geom = unary_union([LineString(sample(s)).buffer(HS, cap_style="square", join_style="mitre", mitre_limit=2.2)
+    geom = unary_union([box(s[0].x - s[0].size / 2, s[0].y - s[0].size / 2, s[0].x + s[0].size / 2,
+                            s[0].y + s[0].size / 2) if isinstance(s[0], DotSeg) else
+                        LineString(sample(s)).buffer(HS, cap_style="square", join_style="mitre", mitre_limit=2.2)
                         for s in strokes])
     geom = geom.intersection(box(-200, clip[0], ADV + 200, clip[1])).simplify(1.5)
     polys = list(geom.geoms) if isinstance(geom, MultiPolygon) else [geom]
